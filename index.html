@@ -104,6 +104,57 @@
   .stat small { display: block; color: var(--faint); font-size: 15px; }
   footer { color: var(--faint); margin-top: 14px; font-size: 17px; }
 
+  /* tabs */
+  .tabs { display: flex; gap: 0; margin-top: 12px; border-bottom: 4px solid var(--line); overflow-x: auto; overflow-y: hidden; scrollbar-width: none; }
+  .tabs::-webkit-scrollbar { display: none; }
+  .tab { font-family: var(--px); font-size: 9px; padding: 10px 12px; background: none; border: 0; border-bottom: 4px solid transparent;
+    margin-bottom: -4px; color: var(--dim); cursor: pointer; white-space: nowrap; }
+  .tab[aria-selected="true"] { color: var(--ink); border-bottom-color: var(--ink); }
+  .tab:focus-visible { outline: 2px solid var(--ink); }
+  .view { display: none; } .view.on { display: block; }
+
+  /* process timeline */
+  .tl { position: relative; margin: 12px 0 0 6px; padding-left: 18px; border-left: 2px solid var(--line2); }
+  .tl-run { position: relative; margin-bottom: 14px; }
+  .tl-run::before { content: ""; position: absolute; left: -24px; top: 4px; width: 10px; height: 10px; background: var(--ink); }
+  .tl-run.quiet::before { background: var(--faint); }
+  .tl-time { font-family: var(--px); font-size: 9px; }
+  .tl-note { color: var(--dim); font-size: 18px; }
+  .tl-dec { display: grid; grid-template-columns: 78px 1fr; gap: 6px; padding: 3px 0; border-bottom: 1px dashed var(--line); font-size: 18px; }
+  .tl-dec .who { font-family: var(--px); font-size: 7px; padding-top: 4px; }
+  .tl-dec .act { color: var(--ink); }
+  .tl-dec .act.buy, .tl-dec .act.sell { background: var(--ink); color: #0a0a0a; padding: 0 4px; }
+  .tl-dec .why { color: var(--dim); }
+  .sched { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+  .sched span { border: 2px solid var(--line2); padding: 3px 6px; font-size: 17px; color: var(--dim); }
+
+  /* journal */
+  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; margin-top: 12px; }
+  .card { border: 4px solid var(--line); background: var(--panel); padding: 8px 10px; }
+  .card small { display: block; color: var(--faint); font-family: var(--px); font-size: 7px; margin-bottom: 6px; }
+  .card b { font-weight: normal; font-size: 26px; }
+  table.j { width: 100%; border-collapse: collapse; margin-top: 12px; font-size: 18px; }
+  table.j th { font-family: var(--px); font-size: 7px; color: var(--faint); text-align: left; padding: 6px 4px; border-bottom: 2px solid var(--line2); }
+  table.j td { padding: 5px 4px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  @media (max-width: 640px) {
+    table.j thead { display: none; } table.j tr { display: block; border: 2px solid var(--line); margin-bottom: 8px; padding: 6px; }
+    table.j td { display: flex; justify-content: space-between; border: 0; padding: 2px 0; }
+    table.j td::before { content: attr(data-l); color: var(--faint); margin-right: 8px; }
+  }
+
+  /* readiness */
+  .verdict { margin-top: 12px; border: 4px solid var(--ink); padding: 12px; text-align: center; }
+  .verdict .big { font-family: var(--px); font-size: 14px; line-height: 1.6; }
+  .meter { height: 14px; background: var(--panel2); border: 2px solid var(--line2); margin: 6px 0 2px; position: relative; }
+  .meter i { position: absolute; left: 0; top: 0; bottom: 0; background: var(--ink); }
+  .rb { border: 4px solid var(--line); background: var(--panel); padding: 10px 12px; }
+  .rb h3 { font-family: var(--px); font-size: 10px; margin: 0 0 6px; }
+  .ck { display: flex; justify-content: space-between; padding: 3px 0; border-bottom: 1px dashed var(--line); }
+  .ck .no { color: var(--faint); } .ck .yes { color: var(--up); }
+  .seg { display: inline-flex; border: 2px solid var(--line2); margin-top: 8px; }
+  .seg button { font-family: var(--px); font-size: 8px; background: none; border: 0; padding: 7px 9px; color: var(--dim); cursor: pointer; }
+  .seg button[aria-pressed="true"] { background: var(--ink); color: #0a0a0a; }
+
   /* sprite animations */
   @keyframes type { 0%,100% { transform: translateY(0) } 50% { transform: translateY(-1px) } }
   @keyframes look { 0%,40% { transform: translateX(0) } 50%,90% { transform: translateX(1px) } }
@@ -146,15 +197,50 @@
   <div class="ticker"><div class="track" id="tape"></div></div>
   <div class="banner" id="banner"></div>
 
-  <div class="lobby" id="lobby"></div>
-  <div class="floor" id="floor"><div class="desks" id="desks"></div></div>
+  <nav class="tabs" role="tablist" aria-label="Sections">
+    <button class="tab" role="tab" data-v="office" aria-selected="true">🏢 OFFICE</button>
+    <button class="tab" role="tab" data-v="process" aria-selected="false">🧠 PROCESS</button>
+    <button class="tab" role="tab" data-v="journal" aria-selected="false">📒 JOURNAL</button>
+    <button class="tab" role="tab" data-v="ready" aria-selected="false">✅ READINESS</button>
+  </nav>
 
-  <div class="grid">
-    <div class="panel"><h2>▸ LEADERBOARD (VS $1,000 START)</h2><div id="board"></div></div>
-    <div class="panel"><h2>▸ TRADE LOG · TODAY</h2><div class="term" id="feed"></div></div>
-    <div class="panel chart"><h2>▸ THE RACE</h2><div id="race"></div></div>
-    <div class="panel"><h2>▸ FACTS</h2><div class="facts" id="facts"></div></div>
-  </div>
+  <section class="view on" id="v-office" role="tabpanel">
+    <div class="lobby" id="lobby" style="margin-top:12px"></div>
+    <div class="floor" id="floor"><div class="desks" id="desks"></div></div>
+    <div class="grid">
+      <div class="panel"><h2>▸ LEADERBOARD (VS $1,000 START)</h2><div id="board"></div></div>
+      <div class="panel"><h2>▸ TRADE LOG · TODAY</h2><div class="term" id="feed"></div></div>
+      <div class="panel chart"><h2>▸ THE RACE</h2><div id="race"></div></div>
+      <div class="panel"><h2>▸ FACTS</h2><div class="facts" id="facts"></div></div>
+    </div>
+  </section>
+
+  <section class="view" id="v-process" role="tabpanel">
+    <div class="panel" style="margin-top:12px"><h2>▸ HOW A DAY WORKS (NEW YORK TIME)</h2>
+      <div class="sched"><span>9:35 clock in</span><span>:05 / :35 checks</span><span>10:30–14:30 day-traders may buy</span>
+        <span>15:30 Momo's last-hour check</span><span>15:48 everyone sells</span><span>16:15+ report</span></div>
+      <div class="tl-note" style="margin-top:8px">Every check: safety ✓ → prices ✓ → quotes → each bot decides → orders priced at the real bid/ask → journal.</div>
+    </div>
+    <div class="panel" style="margin-top:12px"><h2 id="tl-title">▸ TODAY, CHECK BY CHECK</h2><div id="timeline"></div></div>
+  </section>
+
+  <section class="view" id="v-journal" role="tabpanel">
+    <div class="cards" id="jcards"></div>
+    <div class="panel" style="margin-top:12px"><h2>▸ EVERY COMPLETED TRADE (NEWEST FIRST)</h2><div id="jtable"></div>
+      <div class="tl-note" style="margin-top:8px">Fill gap = how far the fill was from the fair middle price (1 bp = 0.01%). Fees = broker regulatory fees, rounded up to the penny like a real account.</div></div>
+  </section>
+
+  <section class="view" id="v-ready" role="tabpanel">
+    <div class="verdict" id="verdict"></div>
+    <div class="grid" id="rbots"></div>
+    <div class="grid">
+      <div class="panel"><h2>▸ IF THIS WERE YOUR REAL MONEY</h2>
+        <div class="seg" role="group" aria-label="Account size"><button data-plan="300" aria-pressed="true">$300</button><button data-plan="1000" aria-pressed="false">$1,000</button></div>
+        <div id="plan" style="margin-top:8px"></div></div>
+      <div class="panel"><h2>▸ ARE OUR COST GUESSES RIGHT?</h2><div id="costs" class="facts"></div></div>
+    </div>
+  </section>
+
   <footer id="foot">Waiting for data…</footer>
 </div>
 
@@ -301,6 +387,12 @@ function cubicle(p, mood, lights, spark) {
 }
 
 // --- render ---
+function planLine(id) {
+  const r = status && status.readiness, b = r && r.bots.find(x => x.id === id);
+  if (!b) return "";
+  const plan = r.plan_amount || 300, d = b.plan_value - plan;
+  return `<div class="mini">your ${money(plan).replace(".00", "")} → ${money(b.plan_value)} <span class="${cls(d)}">(${d >= 0 ? "+" : "-"}${money(Math.abs(d))})</span></div>`;
+}
 function players() {
   if (status) return status.players;
   return ORDER.slice(0, 4).map(id => ({ id, ...BOTS[id], value: 1000, today: 0, since_start: 0, trades: 0, mood: "sleeping", bubble: "", holding: null }));
@@ -358,7 +450,8 @@ function render() {
       <div class="plate"><div class="row"><span class="name">${esc(p.name)}</span><span class="badge ${mood}">${label}</span></div>
       <div class="role">${esc(p.role)}</div>
       <div class="val">${money(p.value)} <span class="${cls(p.since_start)}" style="font-size:20px">${pct(p.since_start)}</span></div>
-      <div class="mini">today <span class="${cls(p.today)}">${pct(p.today)}</span> · ${p.trades} trades${p.holding ? " · " + p.holding : ""}</div></div></button>`;
+      <div class="mini">today <span class="${cls(p.today)}">${pct(p.today)}</span> · ${p.trades} trades${p.holding ? " · " + p.holding : ""}</div>
+      ${planLine(p.id)}</div></button>`;
   }).join("");
   document.querySelectorAll(".desk").forEach(el => el.onclick = () => openBot(el.dataset.id));
 
@@ -391,7 +484,113 @@ function render() {
   document.getElementById("foot").textContent = status
     ? `Last check-in ${status.updated.replace("T", " ")} New York · updates ~every 30 min while the market is open · PAPER / SIMULATION ONLY`
     : "Updates ~every 30 min while the market is open · PAPER / SIMULATION ONLY";
+  renderProcess(); renderJournal(); renderReady();
 }
+
+// --- PROCESS tab: every check of the day, what each bot decided and why ---
+const SHORT = { d2_ai: "AI", d1_momentum: "Momo", d3_breakout: "Rocket", buy_hold: "Holdy", v3_shadow: "V3" };
+function renderProcess() {
+  const el = document.getElementById("timeline");
+  const fresh = !!status && (DEMO || status.date === nyParts().date);
+  const tl = status && status.timeline ? status.timeline : [];
+  document.getElementById("tl-title").textContent = status && status.date
+    ? `▸ ${fresh ? "TODAY" : status.date}, CHECK BY CHECK (NEWEST FIRST)` : "▸ TODAY, CHECK BY CHECK";
+  if (!tl.length) {
+    el.innerHTML = `<div class="tl-note">No checks yet. The first one is at 9:35 AM New York (8:35 AM Central) on the next market day.</div>`;
+    return;
+  }
+  el.innerHTML = `<div class="tl">` + tl.slice().reverse().map(run => {
+    const quiet = !run.decisions.length;
+    return `<div class="tl-run ${quiet ? "quiet" : ""}"><div class="tl-time">${esc(run.t)} NY</div>`
+      + run.notes.map(n => `<div class="tl-note">${esc(n)}</div>`).join("")
+      + run.decisions.map(d => {
+          const a = d.action || "", k = /^BUY/.test(a) ? "buy" : /^SELL/.test(a) ? "sell" : "";
+          return `<div class="tl-dec"><span class="who">${esc(SHORT[d.bot] || d.bot)}</span>`
+            + `<span><span class="act ${k}">${esc(a)}</span> <span class="why">${esc(d.why || "")}</span></span></div>`;
+        }).join("") + `</div>`;
+  }).join("") + `</div>`;
+}
+
+// --- JOURNAL tab: every completed trade with fees and fill quality ---
+function renderJournal() {
+  const j = status && status.journal ? status.journal : [];
+  const n = j.length, wins = j.filter(e => e.pnl > 0).length;
+  const pnl = j.reduce((a, e) => a + e.pnl, 0), fees = j.reduce((a, e) => a + e.fees, 0);
+  const gaps = j.flatMap(e => [e.buy_gap_bps, e.sell_gap_bps]).filter(g => g != null);
+  const avgGap = gaps.length ? gaps.reduce((a, b) => a + b, 0) / gaps.length : null;
+  const signed = v => `<span class="${cls(v)}">${v >= 0 ? "+" : "-"}${money(Math.abs(v))}</span>`;
+  document.getElementById("jcards").innerHTML = [
+    ["TRADES", n], ["WIN RATE", n ? Math.round(wins / n * 100) + "%" : "—"], ["TOTAL P/L", signed(pnl)],
+    ["FEES PAID", money(fees)], ["AVG FILL GAP", avgGap == null ? "—" : `${avgGap >= 0 ? "+" : ""}${avgGap.toFixed(1)} bp`],
+  ].map(([k, v]) => `<div class="card"><small>${k}</small><b>${v}</b></div>`).join("");
+  if (!n) {
+    document.getElementById("jtable").innerHTML = `<div class="tl-note">No completed trades yet. Day-traders sell at 3:48 PM New York, so the first ones show up after the first trading day's close.</div>`;
+    return;
+  }
+  document.getElementById("jtable").innerHTML = `<table class="j"><thead><tr><th>DATE</th><th>BOT</th><th>ETF</th><th>TIME</th><th>BUY → SELL</th><th>P/L</th><th>FEES</th><th>GAP</th></tr></thead><tbody>`
+    + j.map(e => {
+        const gs = [e.buy_gap_bps, e.sell_gap_bps].filter(x => x != null), g = gs.reduce((a, b) => a + b, 0);
+        return `<tr><td data-l="Date">${esc(e.date)}</td><td data-l="Bot">${esc(SHORT[e.bot] || e.bot)}</td><td data-l="ETF">${esc(e.symbol)}</td>`
+          + `<td data-l="Time">${esc(e.buy_time || "?")}→${esc(e.sell_time)}</td><td data-l="Buy → Sell">${money(e.buy_price)} → ${money(e.sell_price)}</td>`
+          + `<td data-l="P/L">${signed(e.pnl)}</td><td data-l="Fees">${money(e.fees)}</td>`
+          + `<td data-l="Gap">${gs.length ? `${g >= 0 ? "+" : ""}${g.toFixed(1)} bp` : "—"}</td></tr>`;
+      }).join("") + `</tbody></table>`;
+}
+
+// --- READINESS tab: the real-money bar, "your $300", and the cost reality check ---
+let planMode = "plan";
+function renderReady() {
+  const r = status && status.readiness, v = document.getElementById("verdict");
+  if (!r) {
+    v.innerHTML = `<div class="big">READY FOR REAL MONEY?<br>NOT YET</div><div class="tl-note">The scorecard fills in after the first trading day.</div>`;
+    document.getElementById("rbots").innerHTML = ""; document.getElementById("plan").innerHTML = ""; document.getElementById("costs").innerHTML = "";
+    return;
+  }
+  const w = Math.min(1, r.weeks / r.bar.weeks);
+  v.innerHTML = `<div class="big">READY FOR REAL MONEY?<br>${r.ready.length ? "CANDIDATE: " + esc(r.ready.join(", ")) : "NOT YET"}</div>`
+    + `<div class="meter"><i style="width:${w * 100}%"></i></div>`
+    + `<div class="tl-note">${r.weeks} / ${r.bar.weeks} weeks of paper trading · the bar was set before any results · a parent makes the final call · this site never moves real money</div>`;
+  document.getElementById("rbots").innerHTML = r.bots.filter(b => b.checks).map(b => {
+    const t = Math.min(1, b.trades / r.bar.trades);
+    return `<div class="rb"><h3>${esc(b.name)}</h3>`
+      + `<div class="tl-note">${money(b.value)} · <span class="${cls(b.ret)}">${pct(b.ret)}</span> · vs Holdy <span class="${cls(b.vs_holdy)}">${pct(b.vs_holdy)}</span></div>`
+      + `<div class="meter"><i style="width:${t * 100}%"></i></div><div class="tl-note">${b.trades} / ${r.bar.trades} trades</div>`
+      + Object.entries(b.checks).map(([k, ok]) => `<div class="ck"><span>${esc(k)}</span><span class="${ok ? "yes" : "no"}">${ok ? "✓ yes" : "– not yet"}</span></div>`).join("")
+      + `</div>`;
+  }).join("");
+  renderPlan(r);
+  const m = r.measured_round_trip;
+  document.getElementById("costs").innerHTML = `<div>Backtests assumed <b>${(r.assumed_round_trip * 100).toFixed(2)}%</b> per round trip (buy + sell).</div>`
+    + `<div style="margin-top:6px">Real paper trades so far: <b>${m == null ? "— (no trades yet)" : (m * 100).toFixed(3) + "%"}</b> (broker fees + crossing the bid/ask).</div>`
+    + `<div style="margin-top:6px;color:var(--faint)">If real costs are lower than the backtests assumed, the bots will look better live; if higher, worse. Alpaca's paper fills skip market-impact slippage, so real money could cost a bit more.</div>`;
+}
+function renderPlan(r) {
+  const plan = r.plan_amount || 300;
+  document.querySelector('.seg button[data-plan="300"]').textContent = money(plan).replace(".00", "");
+  document.getElementById("plan").innerHTML = r.bots.map(b => {
+    const val = planMode === "plan" ? b.plan_value : b.value, base = planMode === "plan" ? plan : r.start_cash, d = val - base;
+    return `<div class="lb-row" style="grid-template-columns:1fr 110px 90px"><span>${esc(b.name)}</span><span class="lb-val">${money(val)}</span>`
+      + `<span class="lb-val ${cls(d)}">${d >= 0 ? "+" : "-"}${money(Math.abs(d))}</span></div>`;
+  }).join("") + `<div class="tl-note" style="margin-top:6px">${planMode === "plan"
+      ? "Every real paper trade replayed at your amount, with fees rounded up to the penny like a real broker."
+      : "The actual race accounts ($1,000 each)."} Paper only: no real money moves.</div>`;
+}
+document.querySelectorAll(".seg button").forEach(b => b.onclick = () => {
+  planMode = b.dataset.plan === "300" ? "plan" : "race";
+  document.querySelectorAll(".seg button").forEach(x => x.setAttribute("aria-pressed", x === b ? "true" : "false"));
+  if (status && status.readiness) renderPlan(status.readiness);
+});
+
+// --- tabs (remembers your last tab; #process / #journal / #ready links work too) ---
+function showTab(v) {
+  if (!document.getElementById("v-" + v)) v = "office";
+  document.querySelectorAll(".tab").forEach(b => b.setAttribute("aria-selected", b.dataset.v === v ? "true" : "false"));
+  document.querySelectorAll(".view").forEach(s => s.classList.toggle("on", s.id === "v-" + v));
+  try { localStorage.setItem("hq-tab", v); } catch (e) { /* storage blocked: fine */ }
+  history.replaceState(null, "", location.pathname + location.search + (v === "office" ? "" : "#" + v));
+}
+document.querySelectorAll(".tab").forEach(b => b.onclick = () => showTab(b.dataset.v));
+(() => { let v = location.hash.slice(1); if (!v) { try { v = localStorage.getItem("hq-tab") || "office"; } catch (e) { v = "office"; } } showTab(v); })();
 
 function raceChart(hist, ps) {
   if (!hist || hist.length < 2) return `<div style="color:var(--dim)">The race chart appears after 2 trading days.</div>`;

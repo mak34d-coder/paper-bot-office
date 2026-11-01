@@ -1,0 +1,273 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Paper Bot HQ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+<style>
+  /* Paper Bot HQ: a pixel office for Mak's PAPER trading bots. Fake money only. */
+  :root {
+    --bg: #0b0b0b; --wall: #161616; --wall2: #1c1c1c; --floor1: #121212; --floor2: #171717;
+    --ink: #f2f2f2; --dim: #9a9a9a; --faint: #5c5c5c; --line: #2a2a2a;
+    --up: #9ccf9c; --down: #d99a9a;
+    --px: "Press Start 2P", monospace; --txt: "VT323", monospace;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--txt); font-size: 20px; }
+  .wrap { max-width: 1100px; margin: 0 auto; padding: 16px; }
+  header { display: flex; flex-wrap: wrap; gap: 10px 16px; align-items: center; justify-content: space-between; }
+  h1 { font-family: var(--px); font-size: 16px; margin: 0; letter-spacing: 1px; }
+  .tag { font-family: var(--px); font-size: 8px; border: 2px solid var(--ink); padding: 5px 7px; }
+  .clock { font-family: var(--px); font-size: 10px; color: var(--dim); }
+  .pill { font-family: var(--px); font-size: 9px; padding: 6px 8px; border: 2px solid var(--faint); color: var(--dim); }
+  .pill.open { border-color: var(--ink); color: var(--ink); }
+  .banner { margin: 12px 0 0; padding: 8px 10px; border: 2px dashed var(--faint); color: var(--dim); display: none; }
+  .banner.show { display: block; }
+
+  .office { margin-top: 14px; border: 4px solid var(--line); background:
+      repeating-conic-gradient(var(--floor1) 0 25%, var(--floor2) 0 50%) 0 0 / 24px 24px; position: relative; }
+  .office.dark::after { content: ""; position: absolute; inset: 0; background: rgba(0,0,0,.45); pointer-events: none; }
+  .desks { display: grid; grid-template-columns: repeat(4, 1fr); }
+  @media (max-width: 760px) { .desks { grid-template-columns: repeat(2, 1fr); } }
+  .desk { border-right: 2px solid var(--line); border-bottom: 2px solid var(--line); position: relative; padding: 40px 0 8px; background: #161616; }
+  .desk svg { display: block; width: 100%; height: auto; image-rendering: pixelated; shape-rendering: crispEdges; }
+  .bubble { position: absolute; top: 6px; left: 6px; right: 6px; background: var(--ink); color: #111;
+    font-size: 17px; line-height: 1; padding: 5px 6px; border-radius: 0; box-shadow: 3px 3px 0 #000; min-height: 24px; }
+  .bubble::after { content: ""; position: absolute; left: 28%; bottom: -8px; border: 4px solid transparent;
+    border-top-color: var(--ink); border-left-color: var(--ink); }
+  .plate { padding: 0 8px; }
+  .plate .name { font-family: var(--px); font-size: 10px; margin-top: 4px; }
+  .plate .role { color: var(--dim); font-size: 17px; }
+  .plate .val { font-size: 24px; }
+  .up { color: var(--up); } .down { color: var(--down); } .flat { color: var(--dim); }
+
+  .panels { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 14px; }
+  @media (max-width: 760px) { .panels { grid-template-columns: 1fr; } }
+  .panel { border: 4px solid var(--line); background: var(--wall); padding: 10px 12px; }
+  .panel h2 { font-family: var(--px); font-size: 10px; margin: 0 0 8px; color: var(--dim); }
+  table { width: 100%; border-collapse: collapse; }
+  td { padding: 3px 4px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+  td.r { text-align: right; }
+  .feed { list-style: none; margin: 0; padding: 0; max-height: 260px; overflow: auto; }
+  .feed li { padding: 3px 0; border-bottom: 1px solid var(--line); word-break: break-word; }
+  .chart svg { width: 100%; height: 140px; display: block; }
+  footer { color: var(--faint); margin: 14px 0 24px; font-size: 17px; }
+
+  /* animations */
+  @keyframes type { 0%,100% { transform: translateY(0) } 50% { transform: translateY(-1px) } }
+  @keyframes look { 0%,40% { transform: translateX(0) } 50%,90% { transform: translateX(1px) } }
+  @keyframes bounce { 0%,100% { transform: translateY(0) } 50% { transform: translateY(-2px) } }
+  @keyframes floatz { 0% { opacity: 0; transform: translate(0,0) } 30% { opacity: 1 } 100% { opacity: 0; transform: translate(3px,-6px) } }
+  @keyframes blink { 0%,90% { opacity: 1 } 95% { opacity: 0 } }
+  @keyframes scroll { to { stroke-dashoffset: -40 } }
+  @keyframes steam { 0% { opacity: 0; transform: translateY(0) } 50% { opacity: .8 } 100% { opacity: 0; transform: translateY(-3px) } }
+  .arms-typing { animation: type .25s steps(1) infinite; }
+  .eyes-look { animation: look 3s steps(1) infinite; }
+  .bot-bounce { animation: bounce .5s steps(1) infinite; }
+  .z { animation: floatz 2.4s linear infinite; }
+  .blinker { animation: blink 1.2s steps(1) infinite; }
+  .tape { stroke-dasharray: 4 2; animation: scroll 2s linear infinite; }
+  .steam { animation: steam 2s linear infinite; }
+  @media (prefers-reduced-motion: reduce) { * { animation: none !important; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>PAPER BOT HQ</h1>
+    <span class="tag">PAPER / SIMULATION ONLY</span>
+    <span class="pill" id="pill">…</span>
+    <span class="clock" id="clock">--:--</span>
+  </header>
+  <div class="banner" id="banner"></div>
+
+  <div class="office" id="office"><div class="desks" id="desks"></div></div>
+
+  <div class="panels">
+    <div class="panel"><h2>SCOREBOARD</h2><table id="board"></table></div>
+    <div class="panel"><h2>TODAY'S TRADES</h2><ul class="feed" id="feed"></ul></div>
+    <div class="panel chart"><h2>THE RACE ($1,000 START)</h2><div id="race"></div></div>
+    <div class="panel"><h2>HOW IT WORKS</h2>
+      <div style="color:var(--dim)">Fake money. Every ~30 min during market hours the bots check prices.
+      Day traders (AI, Momo, Rocket) can make 1 trade a day and always sell before the close. Holdy buys SPY and never sells.
+      In backtests, all three day traders lost to Holdy after fees.</div></div>
+  </div>
+  <footer id="foot">Waiting for data…</footer>
+</div>
+
+<script>
+const NY = "America/New_York";
+const DEFAULT_PLAYERS = [
+  { id: "d2_ai", name: "AI", role: "AI day trader" },
+  { id: "d1_momentum", name: "Momo", role: "Late-day momentum" },
+  { id: "d3_breakout", name: "Rocket", role: "Breakout (QQQ)" },
+  { id: "buy_hold", name: "Holdy", role: "Buy & hold SPY" },
+];
+let status = null;
+// ?demo shows the last check-in as if the market were open right now (handy on weekends).
+const DEMO = new URLSearchParams(location.search).has("demo");
+
+// --- time helpers (New York market clock) ---
+function nyParts(d = new Date()) {
+  const f = new Intl.DateTimeFormat("en-US", { timeZone: NY, weekday: "short", hour: "2-digit", minute: "2-digit",
+    hour12: false, year: "numeric", month: "2-digit", day: "2-digit" });
+  const p = Object.fromEntries(f.formatToParts(d).map(x => [x.type, x.value]));
+  return { date: `${p.year}-${p.month}-${p.day}`, mins: (+p.hour % 24) * 60 + +p.minute, wd: p.weekday };
+}
+function clockPhase() {
+  const t = nyParts();
+  if (t.wd === "Sat" || t.wd === "Sun") return "weekend";
+  if (t.mins < 570) return "preopen";
+  if (t.mins >= 960) return "closed";
+  return "open";
+}
+const money = v => "$" + v.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+const pct = v => (v > 0 ? "+" : "") + (v * 100).toFixed(2) + "%";
+const cls = v => v > 0.00001 ? "up" : v < -0.00001 ? "down" : "flat";
+
+// --- pixel robot desk scene (64 x 48 pixel grid) ---
+function rect(x, y, w, h, fill, extra = "") { return `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${fill}" ${extra}/>`; }
+function scene(p, mood, lightsOn) {
+  const W = "#f2f2f2", G = "#9a9a9a", D = "#3a3a3a", K = "#0b0b0b", M = "#5c5c5c";
+  const sleeping = mood === "sleeping";
+  let s = `<svg viewBox="0 0 64 48" xmlns="http://www.w3.org/2000/svg">`;
+  s += rect(0, 0, 64, 31, "#161616") + rect(0, 30, 64, 1, "#222");
+  // wall decoration per bot
+  if (p.id === "d3_breakout") s += rect(4, 3, 7, 9, D) + rect(7, 4, 1, 5, W) + rect(6, 6, 3, 2, G) + rect(6, 9, 1, 1, G) + rect(8, 9, 1, 1, G);
+  else if (p.id === "d1_momentum") s += rect(4, 3, 8, 8, D) + rect(5, 4, 6, 6, K) + rect(8, 5, 1, 3, W) + rect(8, 7, 2, 1, W);
+  else if (p.id === "d2_ai") s += rect(3, 3, 9, 7, D) + rect(4, 4, 7, 5, K) + `<text x="5" y="8" font-size="4" fill="${G}" font-family="monospace">01</text>`;
+  else s += rect(3, 4, 10, 6, D) + rect(4, 5, 8, 4, "#2c2c2c") + rect(5, 7, 6, 1, M);
+  // monitor
+  s += rect(36, 9, 24, 17, D) + rect(38, 11, 20, 13, sleeping || !lightsOn ? "#0d0d0d" : "#101010") + rect(46, 26, 4, 3, D) + rect(43, 29, 10, 1, D);
+  if (!sleeping && lightsOn) {
+    if (mood === "paused") s += `<text x="40" y="19" font-size="4" fill="${W}" font-family="monospace">PAUSED</text>`;
+    else {
+      const pts = [];
+      for (let i = 0; i <= 18; i++) pts.push(`${39 + i},${18 + Math.round(Math.sin(i * 0.9 + p.id.length) * 3)}`);
+      s += `<polyline points="${pts.join(" ")}" fill="none" stroke="${mood === "trading" ? W : G}" stroke-width="1" ${mood === "trading" ? 'class="tape"' : ""}/>`;
+      if (p.holding) s += `<text x="39" y="15" font-size="3.4" fill="${W}" font-family="monospace">${p.holding}</text>`;
+    }
+  }
+  // desk + keyboard + items
+  s += rect(0, 31, 64, 4, "#2a2a2a") + rect(0, 35, 64, 1, "#1e1e1e") + rect(4, 36, 2, 10, "#1e1e1e") + rect(58, 36, 2, 10, "#1e1e1e");
+  s += rect(29, 30, 14, 2, M) + rect(30, 30, 12, 1, G);
+  if (p.id === "buy_hold") {
+    s += rect(48, 27, 5, 4, W) + rect(53, 28, 1, 2, W);
+    if (!sleeping) s += `<g class="steam">${rect(49, 24, 1, 2, G)}${rect(51, 23, 1, 2, G)}</g>`;
+  }
+  if (p.id === "d1_momentum") s += rect(52, 28, 4, 3, G) + rect(53, 29, 2, 1, K);
+  // robot
+  const body = mood === "paused" ? M : (lightsOn ? G : M);
+  const head = mood === "paused" ? M : (lightsOn ? W : G);
+  const tilt = sleeping || mood === "lost" ? 2 : 0;
+  s += `<g class="${mood === "won" ? "bot-bounce" : ""}">`;
+  s += rect(12, 22, 16, 9, body);                                // body
+  s += rect(13, 10 + tilt, 14, 11, head) + rect(14, 11 + tilt, 12, 9, D); // head + face screen
+  if (p.id === "d2_ai") s += rect(19, 6 + tilt, 2, 4, head) + `<rect x="19" y="${5 + tilt}" width="2" height="2" fill="${W}" class="blinker"/>`;
+  if (p.id === "d1_momentum") s += rect(13, 11 + tilt, 14, 2, G);
+  if (p.id === "d3_breakout") s += rect(12, 9 + tilt, 16, 2, G) + rect(24, 8 + tilt, 5, 2, G);
+  // eyes / face by mood
+  const ey = 14 + tilt;
+  if (sleeping) s += rect(16, ey + 1, 3, 1, W) + rect(21, ey + 1, 3, 1, W);
+  else if (mood === "won") s += rect(16, ey + 1, 1, 1, W) + rect(17, ey, 1, 1, W) + rect(18, ey + 1, 1, 1, W)
+                          + rect(21, ey + 1, 1, 1, W) + rect(22, ey, 1, 1, W) + rect(23, ey + 1, 1, 1, W) + rect(18, ey + 4, 4, 1, W);
+  else if (mood === "lost") s += rect(16, ey + 1, 2, 2, W) + rect(22, ey + 1, 2, 2, W) + rect(18, ey + 5, 4, 1, W) + rect(26, ey - 2, 1, 2, "#8fb3d9");
+  else if (p.id === "buy_hold") s += rect(15, ey, 10, 3, K) + rect(15, ey, 4, 2, "#222") + rect(21, ey, 4, 2, "#222") + rect(18, ey + 5, 4, 1, W);
+  else s += `<g class="${mood === "watching" ? "eyes-look" : ""}">${rect(16, ey, 2, 2, W)}${rect(22, ey, 2, 2, W)}</g>` + rect(18, ey + 5, 4, 1, G);
+  // arms
+  const armCls = mood === "trading" ? "arms-typing" : "";
+  s += `<g class="${armCls}">${rect(26, 26, 6, 2, body)}${rect(31, 28, 3, 2, head)}</g>`;
+  s += `</g>`;
+  if (sleeping) s += `<text class="z" x="28" y="10" font-size="5" fill="${G}" font-family="monospace">z</text>`
+                  + `<text class="z" x="31" y="7" font-size="4" fill="${G}" font-family="monospace" style="animation-delay:1.2s">z</text>`;
+  if (mood === "won") s += rect(6, 14, 1, 1, W) + rect(32, 8, 1, 1, G) + rect(9, 20, 1, 1, G) + rect(34, 18, 1, 1, W);
+  return s + `</svg>`;
+}
+
+// --- render ---
+function render() {
+  const phase = DEMO ? "open" : clockPhase();
+  const today = nyParts().date;
+  const fresh = status && (DEMO || status.date === today);
+  const players = status ? status.players : DEFAULT_PLAYERS.map(p => ({ ...p, value: 1000, today: 0, since_start: 0, trades: 0, mood: "sleeping", bubble: "" }));
+  const lightsOn = phase === "open";
+
+  const pill = document.getElementById("pill");
+  pill.textContent = { open: "MARKET OPEN", preopen: "BEFORE OPEN", closed: "MARKET CLOSED", weekend: "WEEKEND" }[phase];
+  pill.className = "pill" + (phase === "open" ? " open" : "");
+  document.getElementById("office").classList.toggle("dark", !lightsOn);
+
+  const banner = document.getElementById("banner");
+  let msg = "";
+  if (!status) msg = "No trading data yet. The bots clock in on the next market day at 9:35 AM New York time (8:35 AM Central).";
+  else if (DEMO) msg = `DEMO: replaying the last check-in (${status.updated.replace("T", " ")} New York).`;
+  else if (phase === "open" && fresh) {
+    const [h, m] = status.updated.slice(11).split(":").map(Number);
+    if (nyParts().mins - (h * 60 + m) > 50) msg = `⚠ The bots haven't checked in since ${status.updated.slice(11)} New York time. GitHub may be running late.`;
+  } else if (phase === "open" && !fresh) msg = "Waiting for today's first check-in…";
+  if (status && status.errors) msg += (msg ? " " : "") + `⚠ ${status.errors} problem(s) today. Check the daily report.`;
+  banner.textContent = msg; banner.classList.toggle("show", !!msg);
+
+  document.getElementById("desks").innerHTML = players.map(p => {
+    let mood = p.mood;
+    if (phase === "weekend" || phase === "preopen" || !fresh) mood = "sleeping";
+    const bubble = mood === "sleeping" ? (phase === "preopen" ? "Zzz… market opens 9:30 New York" : "Zzz…") : p.bubble;
+    return `<div class="desk"><div class="bubble">${escapeHtml(bubble)}</div>${scene(p, mood, lightsOn)}
+      <div class="plate"><div class="name">${p.name}</div><div class="role">${p.role}</div>
+      <div class="val">${money(p.value)} <span class="${cls(p.since_start)}">${pct(p.since_start)}</span></div></div></div>`;
+  }).join("");
+
+  const ranked = [...players].sort((a, b) => b.value - a.value);
+  document.getElementById("board").innerHTML =
+    `<tr style="color:var(--dim)"><td>Bot</td><td class="r">Value</td><td class="r">Today</td><td class="r">Trades</td></tr>` +
+    ranked.map((p, i) =>
+    `<tr><td>${i + 1}. ${p.name}</td><td class="r">${money(p.value)}</td>
+     <td class="r ${cls(p.today)}">${pct(p.today)}</td><td class="r">${p.trades}</td></tr>`).join("");
+
+  const ev = status && fresh ? status.events : [];
+  document.getElementById("feed").innerHTML = ev.length
+    ? ev.slice().reverse().map(e => `<li>${escapeHtml(e.replace(/\)\. .*$/, ")"))}</li>`).join("")
+    : `<li style="color:var(--dim)">No trades yet today.</li>`;
+
+  document.getElementById("race").innerHTML = raceChart(status ? status.history : [], players);
+  document.getElementById("foot").textContent = status
+    ? `Last check-in: ${status.updated.replace("T", " ")} New York · strategy v${status.version} · started ${status.start_date} · updates every ~30 min while the market is open.`
+    : "Updates every ~30 min while the market is open.";
+}
+
+function raceChart(hist, players) {
+  if (!hist || hist.length < 2) return `<div style="color:var(--dim)">The race chart appears after 2 trading days.</div>`;
+  const ids = players.map(p => p.id), vals = hist.flatMap(h => ids.map(id => h[id]));
+  const lo = Math.min(...vals, 1000) - 5, hi = Math.max(...vals, 1000) + 5, W = 300, H = 120;
+  const x = i => 8 + i * (W - 16) / (hist.length - 1), y = v => H - 8 - (v - lo) * (H - 16) / (hi - lo);
+  const dashes = ["", "4 2", "1 2", "6 2 1 2"], widths = [2, 1.5, 1.5, 1.5];
+  let s = `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none"><line x1="0" x2="${W}" y1="${y(1000)}" y2="${y(1000)}" stroke="#333" stroke-dasharray="2 3"/>`;
+  ids.forEach((id, k) => {
+    s += `<polyline fill="none" stroke="${k === 3 ? "#9a9a9a" : "#f2f2f2"}" stroke-width="${widths[k]}" stroke-dasharray="${dashes[k]}"
+      points="${hist.map((h, i) => `${x(i)},${y(h[id])}`).join(" ")}"/>`;
+  });
+  s += `</svg><div style="color:var(--dim);font-size:16px">— AI · - - Momo · ··· Rocket · gray = Holdy · dotted line = $1,000</div>`;
+  return s;
+}
+
+function escapeHtml(t) { return String(t).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c])); }
+
+async function load() {
+  try {
+    const r = await fetch("status.json?t=" + Date.now(), { cache: "no-store" });
+    if (r.ok) status = await r.json();
+  } catch (e) { /* keep last good data */ }
+  render();
+}
+function tick() {
+  document.getElementById("clock").textContent = new Date().toLocaleTimeString("en-US",
+    { timeZone: "America/Chicago", hour: "numeric", minute: "2-digit" }) + " CT";
+}
+load(); tick();
+setInterval(load, 60000); setInterval(tick, 1000); setInterval(render, 60000);
+</script>
+</body>
+</html>

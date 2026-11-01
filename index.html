@@ -2,7 +2,8 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0a0a0a">
 <title>Paper Bot HQ</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -10,250 +11,423 @@
 <style>
   /* Paper Bot HQ: a pixel office for Mak's PAPER trading bots. Fake money only. */
   :root {
-    --bg: #0b0b0b; --wall: #161616; --wall2: #1c1c1c; --floor1: #121212; --floor2: #171717;
-    --ink: #f2f2f2; --dim: #9a9a9a; --faint: #5c5c5c; --line: #2a2a2a;
-    --up: #9ccf9c; --down: #d99a9a;
+    --bg: #0a0a0a; --panel: #121212; --panel2: #171717; --line: #262626; --line2: #333;
+    --ink: #f0f0f0; --dim: #a0a0a0; --faint: #606060;
+    --up: #a6d4a6; --down: #e0a3a3;
     --px: "Press Start 2P", monospace; --txt: "VT323", monospace;
   }
   * { box-sizing: border-box; }
-  body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--txt); font-size: 20px; }
-  .wrap { max-width: 1100px; margin: 0 auto; padding: 16px; }
-  header { display: flex; flex-wrap: wrap; gap: 10px 16px; align-items: center; justify-content: space-between; }
-  h1 { font-family: var(--px); font-size: 16px; margin: 0; letter-spacing: 1px; }
-  .tag { font-family: var(--px); font-size: 8px; border: 2px solid var(--ink); padding: 5px 7px; }
-  .clock { font-family: var(--px); font-size: 10px; color: var(--dim); }
-  .pill { font-family: var(--px); font-size: 9px; padding: 6px 8px; border: 2px solid var(--faint); color: var(--dim); }
-  .pill.open { border-color: var(--ink); color: var(--ink); }
-  .banner { margin: 12px 0 0; padding: 8px 10px; border: 2px dashed var(--faint); color: var(--dim); display: none; }
+  html { -webkit-text-size-adjust: 100%; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--txt); font-size: 20px; line-height: 1.15; }
+  .wrap { max-width: 1180px; margin: 0 auto; padding: 14px 16px 28px; }
+  button { font: inherit; color: inherit; }
+
+  /* header */
+  header { display: grid; grid-template-columns: 1fr auto; gap: 10px; align-items: center; }
+  .brand { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .logo { width: 34px; height: 34px; image-rendering: pixelated; }
+  h1 { font-family: var(--px); font-size: 15px; margin: 0; letter-spacing: 1px; }
+  .tag { font-family: var(--px); font-size: 7px; border: 2px solid var(--ink); padding: 4px 6px; }
+  .status { display: flex; gap: 8px; align-items: center; justify-content: flex-end; flex-wrap: wrap; }
+  .led { width: 10px; height: 10px; background: var(--faint); display: inline-block; margin-right: 6px; }
+  .led.on { background: var(--up); animation: blink 2s steps(1) infinite; }
+  .chip { font-family: var(--px); font-size: 8px; padding: 6px 8px; border: 2px solid var(--line2); color: var(--dim); white-space: nowrap; }
+  .chip.on { border-color: var(--ink); color: var(--ink); }
+  .clocks { font-size: 18px; color: var(--dim); text-align: right; }
+  .clocks b { color: var(--ink); font-weight: normal; }
+  @media (max-width: 640px) { header { grid-template-columns: 1fr; } .status, .clocks { justify-content: flex-start; text-align: left; } }
+
+  /* ticker */
+  .ticker { margin-top: 12px; border-top: 2px solid var(--line2); border-bottom: 2px solid var(--line2); overflow: hidden; white-space: nowrap; background: #0d0d0d; }
+  .ticker .track { display: inline-block; padding: 5px 0; animation: tape 40s linear infinite; }
+  .ticker span { margin: 0 18px; }
+  @keyframes tape { from { transform: translateX(0) } to { transform: translateX(-50%) } }
+
+  .banner { margin-top: 10px; padding: 7px 10px; border: 2px dashed var(--faint); color: var(--dim); display: none; }
   .banner.show { display: block; }
 
-  .office { margin-top: 14px; border: 4px solid var(--line); background:
-      repeating-conic-gradient(var(--floor1) 0 25%, var(--floor2) 0 50%) 0 0 / 24px 24px; position: relative; }
-  .office.dark::after { content: ""; position: absolute; inset: 0; background: rgba(0,0,0,.45); pointer-events: none; }
-  .desks { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); }
-  .desk { border-right: 2px solid var(--line); border-bottom: 2px solid var(--line); position: relative; padding: 40px 0 8px; background: #161616; }
+  /* lobby scene */
+  .lobby { margin-top: 12px; border: 4px solid var(--line); position: relative; background: #111; }
+  .lobby svg { display: block; width: 100%; height: auto; image-rendering: pixelated; shape-rendering: crispEdges; }
+
+  /* cubicles */
+  .floor { border: 4px solid var(--line); border-top: 0;
+    background: repeating-conic-gradient(#101010 0 25%, #141414 0 50%) 0 0 / 22px 22px; position: relative; }
+  .floor.dark::after { content: ""; position: absolute; inset: 0; background: rgba(0,0,0,.5); pointer-events: none; }
+  .desks { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); }
+  @media (max-width: 640px) { .desks { grid-template-columns: 1fr 1fr; } .plate .val { font-size: 22px; } .bubble { font-size: 16px; } }
+  .desk { position: relative; padding: 44px 0 10px; border-right: 2px solid var(--line); border-bottom: 2px solid var(--line);
+    cursor: pointer; text-align: left; background: none; border-top: 0; border-left: 0; }
+  .desk:focus-visible { outline: 2px solid var(--ink); outline-offset: -4px; }
   .desk svg { display: block; width: 100%; height: auto; image-rendering: pixelated; shape-rendering: crispEdges; }
-  .bubble { position: absolute; top: 6px; left: 6px; right: 6px; background: var(--ink); color: #111;
-    font-size: 17px; line-height: 1; padding: 5px 6px; border-radius: 0; box-shadow: 3px 3px 0 #000; min-height: 24px; }
-  .bubble::after { content: ""; position: absolute; left: 28%; bottom: -8px; border: 4px solid transparent;
-    border-top-color: var(--ink); border-left-color: var(--ink); }
-  .plate { padding: 0 8px; }
-  .plate .name { font-family: var(--px); font-size: 10px; margin-top: 4px; }
-  .plate .role { color: var(--dim); font-size: 17px; }
-  .plate .val { font-size: 24px; }
+  .bubble { position: absolute; top: 7px; left: 7px; right: 7px; background: var(--ink); color: #0a0a0a; font-size: 17px; line-height: 1;
+    padding: 5px 6px; box-shadow: 3px 3px 0 #000; min-height: 25px; overflow: hidden; }
+  .bubble::after { content: ""; position: absolute; left: 30%; bottom: -8px; border: 4px solid transparent; border-top-color: var(--ink); border-left-color: var(--ink); }
+  .plate { padding: 2px 10px 0; }
+  .plate .row { display: flex; justify-content: space-between; align-items: baseline; gap: 6px; }
+  .plate .name { font-family: var(--px); font-size: 10px; }
+  .badge { font-family: var(--px); font-size: 6px; padding: 3px 4px; border: 1px solid var(--faint); color: var(--dim); }
+  .badge.trading, .badge.won { border-color: var(--ink); color: var(--ink); }
+  .plate .role { color: var(--dim); font-size: 17px; margin-top: 2px; }
+  .plate .val { font-size: 25px; margin-top: 2px; }
+  .plate .mini { color: var(--faint); font-size: 16px; }
   .up { color: var(--up); } .down { color: var(--down); } .flat { color: var(--dim); }
 
-  .panels { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 14px; }
-  @media (max-width: 760px) { .panels { grid-template-columns: 1fr; } }
-  .panel { border: 4px solid var(--line); background: var(--wall); padding: 10px 12px; }
-  .panel h2 { font-family: var(--px); font-size: 10px; margin: 0 0 8px; color: var(--dim); }
-  table { width: 100%; border-collapse: collapse; }
-  td { padding: 3px 4px; border-bottom: 1px solid var(--line); white-space: nowrap; }
-  td.r { text-align: right; }
-  .feed { list-style: none; margin: 0; padding: 0; max-height: 260px; overflow: auto; }
-  .feed li { padding: 3px 0; border-bottom: 1px solid var(--line); word-break: break-word; }
-  .chart svg { width: 100%; height: 140px; display: block; }
-  footer { color: var(--faint); margin: 14px 0 24px; font-size: 17px; }
+  /* panels */
+  .grid { display: grid; grid-template-columns: 1.1fr .9fr; gap: 14px; margin-top: 14px; }
+  @media (max-width: 820px) { .grid { grid-template-columns: 1fr; } }
+  .panel { border: 4px solid var(--line); background: var(--panel); padding: 10px 12px; min-width: 0; }
+  .panel h2 { font-family: var(--px); font-size: 9px; margin: 0 0 10px; color: var(--dim); letter-spacing: 1px; }
+  .lb-row { display: grid; grid-template-columns: 22px 64px 1fr 92px; gap: 8px; align-items: center; padding: 4px 0; border-bottom: 1px solid var(--line); }
+  .lb-bar { height: 12px; background: var(--panel2); position: relative; }
+  .lb-bar i { position: absolute; top: 0; bottom: 0; background: var(--ink); }
+  .lb-bar .mid { position: absolute; left: 50%; top: -3px; bottom: -3px; width: 1px; background: var(--faint); }
+  .lb-val { text-align: right; white-space: nowrap; }
+  .term { background: #0b0b0b; border: 2px solid var(--line); padding: 8px; max-height: 280px; overflow: auto; font-size: 18px; }
+  .term div { padding: 2px 0; word-break: break-word; }
+  .term .t { color: var(--faint); }
+  .chart svg { width: 100%; height: 170px; display: block; }
+  .legend { display: flex; flex-wrap: wrap; gap: 4px 14px; color: var(--dim); font-size: 17px; margin-top: 6px; }
+  .legend svg { width: 26px; height: 8px; vertical-align: middle; }
+  .facts { color: var(--dim); }
+  .facts b { color: var(--ink); font-weight: normal; }
 
-  /* animations */
+  /* bot profile drawer */
+  .drawer { position: fixed; inset: auto 0 0 0; max-height: 80vh; overflow: auto; background: var(--panel); border-top: 4px solid var(--ink);
+    transform: translateY(105%); transition: transform .2s steps(4); z-index: 10; padding: 14px 16px calc(20px + env(safe-area-inset-bottom)); }
+  .drawer.open { transform: translateY(0); }
+  .drawer .inner { max-width: 760px; margin: 0 auto; }
+  .drawer h3 { font-family: var(--px); font-size: 12px; margin: 0 0 8px; }
+  .drawer .close { float: right; background: none; border: 2px solid var(--ink); font-family: var(--px); font-size: 9px; padding: 6px 8px; cursor: pointer; }
+  .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 8px; margin: 10px 0; }
+  .stat { border: 2px solid var(--line2); padding: 6px 8px; }
+  .stat small { display: block; color: var(--faint); font-size: 15px; }
+  footer { color: var(--faint); margin-top: 14px; font-size: 17px; }
+
+  /* sprite animations */
   @keyframes type { 0%,100% { transform: translateY(0) } 50% { transform: translateY(-1px) } }
   @keyframes look { 0%,40% { transform: translateX(0) } 50%,90% { transform: translateX(1px) } }
   @keyframes bounce { 0%,100% { transform: translateY(0) } 50% { transform: translateY(-2px) } }
-  @keyframes floatz { 0% { opacity: 0; transform: translate(0,0) } 30% { opacity: 1 } 100% { opacity: 0; transform: translate(3px,-6px) } }
-  @keyframes blink { 0%,90% { opacity: 1 } 95% { opacity: 0 } }
+  @keyframes floatz { 0% { opacity: 0; transform: translate(0,0) } 30% { opacity: 1 } 100% { opacity: 0; transform: translate(3px,-7px) } }
+  @keyframes blink { 0%,85% { opacity: 1 } 90% { opacity: .2 } }
   @keyframes scroll { to { stroke-dashoffset: -40 } }
   @keyframes steam { 0% { opacity: 0; transform: translateY(0) } 50% { opacity: .8 } 100% { opacity: 0; transform: translateY(-3px) } }
+  @keyframes twinkle { 0%,100% { opacity: .3 } 50% { opacity: 1 } }
+  @keyframes walk { 0% { transform: translateX(0) } 50% { transform: translateX(14px) } 100% { transform: translateX(0) } }
   .arms-typing { animation: type .25s steps(1) infinite; }
   .eyes-look { animation: look 3s steps(1) infinite; }
   .bot-bounce { animation: bounce .5s steps(1) infinite; }
   .z { animation: floatz 2.4s linear infinite; }
-  .blinker { animation: blink 1.2s steps(1) infinite; }
+  .blinker { animation: blink 1.4s steps(1) infinite; }
   .tape { stroke-dasharray: 4 2; animation: scroll 2s linear infinite; }
   .steam { animation: steam 2s linear infinite; }
-  @media (prefers-reduced-motion: reduce) { * { animation: none !important; } }
+  .star { animation: twinkle 3s steps(2) infinite; }
+  .cat { animation: walk 16s steps(16) infinite; }
+  @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
 </style>
 </head>
 <body>
 <div class="wrap">
   <header>
-    <h1>PAPER BOT HQ</h1>
-    <span class="tag">PAPER / SIMULATION ONLY</span>
-    <span class="pill" id="pill">…</span>
-    <span class="clock" id="clock">--:--</span>
+    <div class="brand">
+      <svg class="logo" viewBox="0 0 16 16"><rect x="3" y="2" width="10" height="9" fill="#f0f0f0"/><rect x="4" y="3" width="8" height="7" fill="#333"/>
+        <rect x="5" y="5" width="2" height="2" fill="#f0f0f0"/><rect x="9" y="5" width="2" height="2" fill="#f0f0f0"/><rect x="7" y="0" width="2" height="2" fill="#f0f0f0"/>
+        <rect x="4" y="12" width="8" height="4" fill="#a0a0a0"/></svg>
+      <h1>PAPER BOT HQ</h1>
+      <span class="tag">PAPER / SIMULATION ONLY</span>
+    </div>
+    <div>
+      <div class="status"><span class="chip" id="pill"><span class="led" id="led"></span><span id="pilltxt">…</span></span>
+        <span class="chip" id="count">--</span></div>
+      <div class="clocks" id="clocks"></div>
+    </div>
   </header>
+
+  <div class="ticker"><div class="track" id="tape"></div></div>
   <div class="banner" id="banner"></div>
 
-  <div class="office" id="office"><div class="desks" id="desks"></div></div>
+  <div class="lobby" id="lobby"></div>
+  <div class="floor" id="floor"><div class="desks" id="desks"></div></div>
 
-  <div class="panels">
-    <div class="panel"><h2>SCOREBOARD</h2><table id="board"></table></div>
-    <div class="panel"><h2>TODAY'S TRADES</h2><ul class="feed" id="feed"></ul></div>
-    <div class="panel chart"><h2>THE RACE ($1,000 START)</h2><div id="race"></div></div>
-    <div class="panel"><h2>HOW IT WORKS</h2>
-      <div style="color:var(--dim)">Fake money. Every ~30 min during market hours the bots check prices.
-      Day traders (AI, Momo, Rocket) can make 1 trade a day and always sell before the close. Holdy buys SPY and never sells.
-      In backtests, all three day traders lost to Holdy after fees.</div></div>
+  <div class="grid">
+    <div class="panel"><h2>▸ LEADERBOARD (VS $1,000 START)</h2><div id="board"></div></div>
+    <div class="panel"><h2>▸ TRADE LOG · TODAY</h2><div class="term" id="feed"></div></div>
+    <div class="panel chart"><h2>▸ THE RACE</h2><div id="race"></div></div>
+    <div class="panel"><h2>▸ FACTS</h2><div class="facts" id="facts"></div></div>
   </div>
   <footer id="foot">Waiting for data…</footer>
 </div>
 
+<div class="drawer" id="drawer" role="dialog" aria-modal="true" aria-labelledby="dtitle"><div class="inner" id="dinner"></div></div>
+
 <script>
 const NY = "America/New_York";
-const DEFAULT_PLAYERS = [
-  { id: "d2_ai", name: "AI", role: "AI day trader" },
-  { id: "d1_momentum", name: "Momo", role: "Late-day momentum" },
-  { id: "d3_breakout", name: "Rocket", role: "Breakout (QQQ)" },
-  { id: "buy_hold", name: "Holdy", role: "Buy & hold SPY" },
-];
-let status = null;
-// ?demo shows the last check-in as if the market were open right now (handy on weekends).
 const DEMO = new URLSearchParams(location.search).has("demo");
+const BOTS = {
+  d2_ai:       { name: "AI",     role: "AI day trader v2", how: "Gradient boosting (hundreds of small decision trees). After each hourly bar it estimates, for SPY, QQQ, DIA and IWM, the chance that buying now beats fees by the close. Buys the best one if it's over 50%. One trade a day, sold before the close.", backtest: "Unseen data (Jan–Oct 2026): $1,000 → $934. Buy & hold: $1,110." },
+  d1_momentum: { name: "Momo",   role: "Late-day momentum", how: "From a 2018 research paper: if SPY is up from yesterday's close through 10:30 AM New York, it buys SPY for the last stretch of the day and sells before the close.", backtest: "Unseen data (Jan–Oct 2026): $1,000 → $868. Buy & hold: $1,110." },
+  d3_breakout: { name: "Rocket", role: "Breakout (QQQ)", how: "Classic opening-range breakout: if QQQ closes an hour above its first-hour high, it buys QQQ and holds to the close.", backtest: "Unseen data (Jan–Oct 2026): $1,000 → $862. Buy & hold: $1,110." },
+  buy_hold:    { name: "Holdy",  role: "Buy & hold SPY", how: "Buys SPY once and never sells. Doesn't day trade. This is the score every other bot has to beat.", backtest: "The benchmark. Over 2013–2026 it beat every bot we built." },
+  v3_shadow:   { name: "V3",     role: "AI v3 lab (shadow)", how: "Trained on 8 years of 5-minute data with 21 clues (VIX, bonds, momentum, volatility…). Two models: chance of profit and size of profit. Only trades if odds > 55% AND expected profit beats fees by +0.05%. Trades on the side with its own $1,000. Not part of the official race.", backtest: "Unseen-ish data (2023–Oct 2026): $1,000 → $1,030. Buy & hold: $2,060." },
+};
+const ORDER = ["d2_ai", "d1_momentum", "d3_breakout", "buy_hold", "v3_shadow"];
+let status = null;
 
-// --- time helpers (New York market clock) ---
+// --- time ---
 function nyParts(d = new Date()) {
-  const f = new Intl.DateTimeFormat("en-US", { timeZone: NY, weekday: "short", hour: "2-digit", minute: "2-digit",
+  const f = new Intl.DateTimeFormat("en-US", { timeZone: NY, weekday: "short", hour: "2-digit", minute: "2-digit", second: "2-digit",
     hour12: false, year: "numeric", month: "2-digit", day: "2-digit" });
   const p = Object.fromEntries(f.formatToParts(d).map(x => [x.type, x.value]));
-  return { date: `${p.year}-${p.month}-${p.day}`, mins: (+p.hour % 24) * 60 + +p.minute, wd: p.weekday };
+  return { date: `${p.year}-${p.month}-${p.day}`, secs: ((+p.hour % 24) * 60 + +p.minute) * 60 + +p.second, wd: p.weekday };
 }
-function clockPhase() {
+function phaseNow() {
+  if (DEMO) return "open";
   const t = nyParts();
   if (t.wd === "Sat" || t.wd === "Sun") return "weekend";
-  if (t.mins < 570) return "preopen";
-  if (t.mins >= 960) return "closed";
+  if (status && status.date === t.date && status.phase === "closed" && t.secs < 57600) return "closed"; // early close / holiday seen by the bot
+  if (t.secs < 34200) return "preopen";
+  if (t.secs >= 57600) return "closed";
   return "open";
 }
+const hms = s => `${Math.floor(s / 3600)}:${String(Math.floor(s % 3600 / 60)).padStart(2, "0")}:${String(s % 60).padStart(2, "0")}`;
 const money = v => "$" + v.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-const pct = v => (v > 0 ? "+" : "") + (v * 100).toFixed(2) + "%";
-const cls = v => v > 0.00001 ? "up" : v < -0.00001 ? "down" : "flat";
+const pct = v => v == null ? "—" : (v > 0 ? "+" : "") + (v * 100).toFixed(2) + "%";
+const cls = v => v == null ? "flat" : v > 0.00001 ? "up" : v < -0.00001 ? "down" : "flat";
+const esc = t => String(t).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const R = (x, y, w, h, f, extra = "") => `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${f}" ${extra}/>`;
 
-// --- pixel robot desk scene (64 x 48 pixel grid) ---
-function rect(x, y, w, h, fill, extra = "") { return `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${fill}" ${extra}/>`; }
-function scene(p, mood, lightsOn) {
-  const W = "#f2f2f2", G = "#9a9a9a", D = "#3a3a3a", K = "#0b0b0b", M = "#5c5c5c";
+// --- lobby: window with time-of-day sky, wall board, server rack, plant, coffee, office cat ---
+function lobby(phase, leader) {
+  const hr = DEMO ? 12 : nyParts().secs / 3600;
+  const sky = hr < 6 || hr >= 19.5 ? ["#05060a", "#0b0d14"] : hr < 8 ? ["#3a3a46", "#8a8070"] : hr >= 17.5 ? ["#4a3a3a", "#9a7a62"] : ["#8a9aa8", "#c8d0d6"];
+  const night = hr < 6 || hr >= 19.5;
+  let s = `<svg viewBox="0 0 240 64" xmlns="http://www.w3.org/2000/svg">`;
+  s += R(0, 0, 240, 64, "#151515") + R(0, 52, 240, 12, "#101010") + R(0, 52, 240, 1, "#262626");
+  // window + skyline
+  s += R(6, 6, 74, 40, "#2a2a2a") + R(8, 8, 70, 36, sky[0]) + R(8, 30, 70, 14, sky[1]);
+  if (night) for (const [x, y] of [[14, 12], [30, 10], [52, 14], [66, 11], [42, 18], [22, 20]]) s += R(x, y, 1, 1, "#ddd", `class="star" style="animation-delay:${x % 3}s"`);
+  else s += R(60, 12, 6, 6, hr >= 17.5 || hr < 8 ? "#d9a070" : "#f4f0d8");
+  const bld = [[8, 26, 8], [17, 20, 7], [25, 28, 9], [35, 16, 8], [44, 24, 7], [52, 19, 10], [63, 27, 6], [70, 22, 8]];
+  for (const [x, y, w] of bld) {
+    s += R(x, y, w, 44 - y, night ? "#0e0e0e" : "#3c3c3c");
+    for (let wy = y + 2; wy < 42; wy += 4) for (let wx = x + 1; wx < x + w - 1; wx += 3)
+      if ((wx * 7 + wy * 3) % 5 < (night ? 2 : 1)) s += R(wx, wy, 1, 2, night ? "#c8b878" : "#5a5a5a");
+  }
+  s += R(42, 6, 2, 40, "#2a2a2a") + R(6, 25, 74, 2, "#2a2a2a");
+  // wall board
+  s += R(90, 8, 70, 30, "#2a2a2a") + R(92, 10, 66, 26, "#0a0a0a");
+  const mk = status && status.market ? status.market : {};
+  const syms = ["SPY", "QQQ", "DIA", "IWM"];
+  syms.forEach((sym, i) => {
+    const m = mk[sym]; const y = 15 + i * 5.5;
+    s += `<text x="95" y="${y}" font-size="4.2" fill="#a0a0a0" font-family="monospace">${sym}</text>`;
+    if (m) s += `<text x="110" y="${y}" font-size="4.2" fill="#f0f0f0" font-family="monospace">${m.price.toFixed(2)}</text>`
+           + `<text x="136" y="${y}" font-size="4.2" fill="${m.chg > 0 ? "#a6d4a6" : m.chg < 0 ? "#e0a3a3" : "#a0a0a0"}" font-family="monospace">${pct(m.chg)}</text>`;
+  });
+  s += `<text x="95" y="40.5" font-size="3.4" fill="#606060" font-family="monospace">LEADER: ${esc(leader || "—")}</text>`;
+  // wall clock
+  const t = nyParts(); const hh = (t.secs / 3600) % 12, mm = (t.secs / 60) % 60;
+  s += `<circle cx="172" cy="16" r="7" fill="#2a2a2a"/><circle cx="172" cy="16" r="5.6" fill="#0d0d0d"/>`;
+  s += `<line x1="172" y1="16" x2="${172 + 3 * Math.sin(hh / 12 * 6.283)}" y2="${16 - 3 * Math.cos(hh / 12 * 6.283)}" stroke="#f0f0f0" stroke-width="1"/>`;
+  s += `<line x1="172" y1="16" x2="${172 + 4.5 * Math.sin(mm / 60 * 6.283)}" y2="${16 - 4.5 * Math.cos(mm / 60 * 6.283)}" stroke="#a0a0a0" stroke-width=".7"/>`;
+  s += `<text x="164" y="30" font-size="3.2" fill="#606060" font-family="monospace">NEW YORK</text>`;
+  // server rack with blinking lights
+  s += R(186, 10, 20, 42, "#222") + R(188, 12, 16, 38, "#0c0c0c");
+  for (let i = 0; i < 6; i++) {
+    s += R(189, 14 + i * 6, 14, 4, "#1b1b1b");
+    s += R(190, 15 + i * 6, 1, 1, phase === "open" ? "#a6d4a6" : "#444", `class="${phase === "open" ? "blinker" : ""}" style="animation-delay:${i * .23}s"`);
+    s += R(192, 15 + i * 6, 1, 1, "#777", `class="blinker" style="animation-delay:${i * .37}s"`) + R(196, 15 + i * 6, 6, 1, "#333");
+  }
+  // plant + coffee machine
+  s += R(214, 42, 10, 10, "#2c2c2c") + R(215, 32, 2, 10, "#5a5a5a") + R(219, 30, 2, 12, "#6a6a6a") + R(212, 33, 4, 2, "#6a6a6a") + R(221, 34, 4, 2, "#5a5a5a") + R(217, 28, 3, 3, "#7a7a7a");
+  s += R(226, 30, 10, 22, "#262626") + R(228, 33, 6, 4, "#0c0c0c") + R(230, 44, 3, 3, "#d8d8d8");
+  if (phase === "open") s += `<g class="steam">${R(231, 41, 1, 2, "#888")}</g>`;
+  // office cat walking along the floor
+  s += `<g class="cat">${R(100, 55, 8, 4, "#d0d0d0")}${R(106, 52, 4, 4, "#d0d0d0")}${R(106, 51, 1, 1, "#d0d0d0")}${R(109, 51, 1, 1, "#d0d0d0")}${R(107, 53, 1, 1, "#111")}${R(98, 53, 2, 1, "#d0d0d0")}${R(97, 52, 1, 1, "#d0d0d0")}${R(101, 59, 1, 2, "#d0d0d0")}${R(106, 59, 1, 2, "#d0d0d0")}</g>`;
+  return s + `</svg>`;
+}
+
+// --- cubicle with robot ---
+function cubicle(p, mood, lights, spark) {
+  const W = "#f0f0f0", G = "#a0a0a0", D = "#383838", K = "#0a0a0a", M = "#606060";
   const sleeping = mood === "sleeping";
   let s = `<svg viewBox="0 0 64 48" xmlns="http://www.w3.org/2000/svg">`;
-  s += rect(0, 0, 64, 31, "#161616") + rect(0, 30, 64, 1, "#222");
-  // wall decoration per bot
-  if (p.id === "d3_breakout") s += rect(4, 3, 7, 9, D) + rect(7, 4, 1, 5, W) + rect(6, 6, 3, 2, G) + rect(6, 9, 1, 1, G) + rect(8, 9, 1, 1, G);
-  else if (p.id === "d1_momentum") s += rect(4, 3, 8, 8, D) + rect(5, 4, 6, 6, K) + rect(8, 5, 1, 3, W) + rect(8, 7, 2, 1, W);
-  else if (p.id === "d2_ai") s += rect(3, 3, 9, 7, D) + rect(4, 4, 7, 5, K) + `<text x="5" y="8" font-size="4" fill="${G}" font-family="monospace">01</text>`;
-  else if (p.id === "v3_shadow") s += rect(5, 4, 4, 2, G) + rect(6, 6, 2, 3, G) + rect(4, 9, 6, 3, G) + rect(5, 10, 4, 1, W);  // lab flask
-  else s += rect(3, 4, 10, 6, D) + rect(4, 5, 8, 4, "#2c2c2c") + rect(5, 7, 6, 1, M);
-  // monitor
-  s += rect(36, 9, 24, 17, D) + rect(38, 11, 20, 13, sleeping || !lightsOn ? "#0d0d0d" : "#101010") + rect(46, 26, 4, 3, D) + rect(43, 29, 10, 1, D);
-  if (!sleeping && lightsOn) {
-    if (mood === "paused") s += `<text x="40" y="19" font-size="4" fill="${W}" font-family="monospace">PAUSED</text>`;
+  s += R(0, 0, 64, 31, "#161616") + R(0, 0, 2, 31, "#202020") + R(62, 0, 2, 31, "#202020") + R(0, 0, 64, 2, "#202020");
+  // pin-board items per bot
+  if (p.id === "d3_breakout") s += R(4, 4, 8, 10, D) + R(7, 5, 2, 6, W) + R(6, 8, 4, 2, G) + R(6, 11, 1, 2, G) + R(9, 11, 1, 2, G);
+  else if (p.id === "d1_momentum") s += R(4, 4, 9, 9, D) + R(5, 5, 7, 7, K) + R(8, 6, 1, 3, W) + R(8, 8, 3, 1, W);
+  else if (p.id === "d2_ai") s += R(3, 4, 10, 8, D) + R(4, 5, 8, 6, K) + `<text x="5" y="10" font-size="4" fill="${G}" font-family="monospace">01</text>`;
+  else if (p.id === "v3_shadow") s += R(6, 4, 4, 2, G) + R(7, 6, 2, 3, G) + R(5, 9, 6, 4, G) + R(6, 10, 4, 2, W);
+  else s += R(3, 5, 11, 7, D) + R(4, 6, 9, 5, "#2c2c2c") + `<text x="5" y="10" font-size="3.4" fill="${G}" font-family="monospace">HODL</text>`;
+  // monitor with this bot's value history (or a waiting line)
+  s += R(35, 8, 26, 18, D) + R(37, 10, 22, 14, sleeping || !lights ? "#0b0b0b" : "#0e0e0e") + R(46, 26, 4, 3, D) + R(43, 29, 10, 1, D);
+  if (!sleeping && lights) {
+    if (mood === "paused") s += `<text x="39" y="18" font-size="4" fill="${W}" font-family="monospace">PAUSED</text>`;
     else {
-      const pts = [];
-      for (let i = 0; i <= 18; i++) pts.push(`${39 + i},${18 + Math.round(Math.sin(i * 0.9 + p.id.length) * 3)}`);
-      s += `<polyline points="${pts.join(" ")}" fill="none" stroke="${mood === "trading" ? W : G}" stroke-width="1" ${mood === "trading" ? 'class="tape"' : ""}/>`;
-      if (p.holding) s += `<text x="39" y="15" font-size="3.4" fill="${W}" font-family="monospace">${p.holding}</text>`;
+      const flat = !spark || spark.length < 2 || Math.max(...spark) - Math.min(...spark) < 0.01;
+      const pts = flat ? Array.from({ length: 12 }, (_, i) => 1000 + Math.sin(i + p.id.length) * 3) : spark;  // idle screensaver wave
+      const lo = Math.min(...pts), hi = Math.max(...pts), span = hi - lo || 1;
+      const line = pts.map((v, i) => `${38 + i * 20 / (pts.length - 1)},${22 - (v - lo) / span * 9}`).join(" ");
+      s += `<polyline points="${line}" fill="none" stroke="${mood === "trading" ? W : G}" stroke-width="1" ${mood === "trading" ? 'class="tape"' : ""}/>`;
+      if (p.holding) s += `<text x="38" y="14" font-size="3.4" fill="${W}" font-family="monospace">${p.holding}</text>`;
     }
-  }
-  // desk + keyboard + items
-  s += rect(0, 31, 64, 4, "#2a2a2a") + rect(0, 35, 64, 1, "#1e1e1e") + rect(4, 36, 2, 10, "#1e1e1e") + rect(58, 36, 2, 10, "#1e1e1e");
-  s += rect(29, 30, 14, 2, M) + rect(30, 30, 12, 1, G);
-  if (p.id === "buy_hold") {
-    s += rect(48, 27, 5, 4, W) + rect(53, 28, 1, 2, W);
-    if (!sleeping) s += `<g class="steam">${rect(49, 24, 1, 2, G)}${rect(51, 23, 1, 2, G)}</g>`;
-  }
-  if (p.id === "d1_momentum") s += rect(52, 28, 4, 3, G) + rect(53, 29, 2, 1, K);
+  } else if (sleeping) s += `<text x="40" y="18" font-size="3" fill="#2a2a2a" font-family="monospace">zzz</text>`;
+  // desk
+  s += R(0, 31, 64, 4, "#2a2a2a") + R(0, 35, 64, 1, "#1d1d1d") + R(4, 36, 2, 12, "#1d1d1d") + R(58, 36, 2, 12, "#1d1d1d");
+  s += R(29, 30, 14, 2, M) + R(30, 30, 12, 1, G);
+  if (p.id === "buy_hold") { s += R(48, 27, 5, 4, W) + R(53, 28, 1, 2, W); if (!sleeping) s += `<g class="steam">${R(49, 24, 1, 2, G)}${R(51, 23, 1, 2, G)}</g>`; }
+  if (p.id === "d1_momentum") s += R(52, 28, 4, 3, G) + R(53, 29, 2, 1, K);
+  if (p.id === "d2_ai") s += R(54, 27, 3, 4, "#4a4a4a") + R(55, 25, 1, 2, "#6a6a6a");
+  if (p.id === "v3_shadow") s += R(52, 26, 3, 5, G) + R(53, 25, 1, 1, W);
+  if (p.id === "d3_breakout") s += R(53, 28, 5, 3, "#4a4a4a");
   // robot
-  const body = mood === "paused" ? M : (lightsOn ? G : M);
-  const head = mood === "paused" ? M : (lightsOn ? W : G);
+  const body = mood === "paused" ? M : (lights ? G : M), head = mood === "paused" ? M : (lights ? W : G);
   const tilt = sleeping || mood === "lost" ? 2 : 0;
-  s += `<g class="${mood === "won" ? "bot-bounce" : ""}">`;
-  s += rect(12, 22, 16, 9, body);                                // body
-  s += rect(13, 10 + tilt, 14, 11, head) + rect(14, 11 + tilt, 12, 9, D); // head + face screen
-  if (p.id === "d2_ai") s += rect(19, 6 + tilt, 2, 4, head) + `<rect x="19" y="${5 + tilt}" width="2" height="2" fill="${W}" class="blinker"/>`;
-  if (p.id === "d1_momentum") s += rect(13, 11 + tilt, 14, 2, G);
-  if (p.id === "d3_breakout") s += rect(12, 9 + tilt, 16, 2, G) + rect(24, 8 + tilt, 5, 2, G);
-  // eyes / face by mood
+  s += `<g class="${mood === "won" ? "bot-bounce" : ""}">` + R(12, 22, 16, 9, body) + R(13, 10 + tilt, 14, 11, head) + R(14, 11 + tilt, 12, 9, D);
+  if (p.id === "d2_ai") s += R(19, 6 + tilt, 2, 4, head) + `<rect x="19" y="${5 + tilt}" width="2" height="2" fill="${W}" class="blinker"/>`;
+  if (p.id === "d1_momentum") s += R(13, 11 + tilt, 14, 2, G);
+  if (p.id === "d3_breakout") s += R(12, 9 + tilt, 16, 2, G) + R(24, 8 + tilt, 5, 2, G);
+  if (p.id === "v3_shadow") s += R(12, 13 + tilt, 1, 4, G) + R(27, 13 + tilt, 1, 4, G) + R(13, 9 + tilt, 14, 1, G);
   const ey = 14 + tilt;
-  if (sleeping) s += rect(16, ey + 1, 3, 1, W) + rect(21, ey + 1, 3, 1, W);
-  else if (mood === "won") s += rect(16, ey + 1, 1, 1, W) + rect(17, ey, 1, 1, W) + rect(18, ey + 1, 1, 1, W)
-                          + rect(21, ey + 1, 1, 1, W) + rect(22, ey, 1, 1, W) + rect(23, ey + 1, 1, 1, W) + rect(18, ey + 4, 4, 1, W);
-  else if (mood === "lost") s += rect(16, ey + 1, 2, 2, W) + rect(22, ey + 1, 2, 2, W) + rect(18, ey + 5, 4, 1, W) + rect(26, ey - 2, 1, 2, "#8fb3d9");
-  else if (p.id === "buy_hold") s += rect(15, ey, 10, 3, K) + rect(15, ey, 4, 2, "#222") + rect(21, ey, 4, 2, "#222") + rect(18, ey + 5, 4, 1, W);
-  else s += `<g class="${mood === "watching" ? "eyes-look" : ""}">${rect(16, ey, 2, 2, W)}${rect(22, ey, 2, 2, W)}</g>` + rect(18, ey + 5, 4, 1, G);
-  // arms
-  const armCls = mood === "trading" ? "arms-typing" : "";
-  s += `<g class="${armCls}">${rect(26, 26, 6, 2, body)}${rect(31, 28, 3, 2, head)}</g>`;
-  s += `</g>`;
-  if (sleeping) s += `<text class="z" x="28" y="10" font-size="5" fill="${G}" font-family="monospace">z</text>`
-                  + `<text class="z" x="31" y="7" font-size="4" fill="${G}" font-family="monospace" style="animation-delay:1.2s">z</text>`;
-  if (mood === "won") s += rect(6, 14, 1, 1, W) + rect(32, 8, 1, 1, G) + rect(9, 20, 1, 1, G) + rect(34, 18, 1, 1, W);
+  if (sleeping) s += R(16, ey + 1, 3, 1, W) + R(21, ey + 1, 3, 1, W);
+  else if (mood === "won") s += R(16, ey + 1, 1, 1, W) + R(17, ey, 1, 1, W) + R(18, ey + 1, 1, 1, W) + R(21, ey + 1, 1, 1, W) + R(22, ey, 1, 1, W) + R(23, ey + 1, 1, 1, W) + R(18, ey + 4, 4, 1, W);
+  else if (mood === "lost") s += R(16, ey + 1, 2, 2, W) + R(22, ey + 1, 2, 2, W) + R(18, ey + 5, 4, 1, W) + R(26, ey - 2, 1, 2, "#9ab");
+  else if (p.id === "buy_hold") s += R(15, ey, 10, 3, K) + R(15, ey, 4, 2, "#222") + R(21, ey, 4, 2, "#222") + R(18, ey + 5, 4, 1, W);
+  else s += `<g class="${mood === "watching" ? "eyes-look" : ""}">${R(16, ey, 2, 2, W)}${R(22, ey, 2, 2, W)}</g>` + R(18, ey + 5, 4, 1, G);
+  s += `<g class="${mood === "trading" ? "arms-typing" : ""}">${R(26, 26, 6, 2, body)}${R(31, 28, 3, 2, head)}</g></g>`;
+  if (sleeping) s += `<text class="z" x="28" y="10" font-size="5" fill="${G}" font-family="monospace">z</text><text class="z" x="31" y="7" font-size="4" fill="${G}" font-family="monospace" style="animation-delay:1.2s">z</text>`;
+  if (mood === "won") s += R(6, 16, 1, 1, W) + R(32, 6, 1, 1, G) + R(9, 22, 1, 1, G) + R(33, 18, 1, 1, W);
   return s + `</svg>`;
 }
 
 // --- render ---
+function players() {
+  if (status) return status.players;
+  return ORDER.slice(0, 4).map(id => ({ id, ...BOTS[id], value: 1000, today: 0, since_start: 0, trades: 0, mood: "sleeping", bubble: "", holding: null }));
+}
 function render() {
-  const phase = DEMO ? "open" : clockPhase();
-  const today = nyParts().date;
-  const fresh = status && (DEMO || status.date === today);
-  const players = status ? status.players : DEFAULT_PLAYERS.map(p => ({ ...p, value: 1000, today: 0, since_start: 0, trades: 0, mood: "sleeping", bubble: "" }));
-  const lightsOn = phase === "open";
+  const phase = phaseNow(), t = nyParts();
+  const fresh = !!status && (DEMO || status.date === t.date);
+  const ps = players();
+  const lights = phase === "open";
+  const ranked = [...ps].filter(p => p.id !== "v3_shadow").sort((a, b) => b.value - a.value);
 
-  const pill = document.getElementById("pill");
-  pill.textContent = { open: "MARKET OPEN", preopen: "BEFORE OPEN", closed: "MARKET CLOSED", weekend: "WEEKEND" }[phase];
-  pill.className = "pill" + (phase === "open" ? " open" : "");
-  document.getElementById("office").classList.toggle("dark", !lightsOn);
+  document.getElementById("pilltxt").textContent = { open: "MARKET OPEN", preopen: "BEFORE OPEN", closed: "MARKET CLOSED", weekend: "WEEKEND" }[phase];
+  document.getElementById("pill").className = "chip" + (lights ? " on" : "");
+  document.getElementById("led").className = "led" + (lights ? " on" : "");
+  let count = "";
+  if (DEMO) count = "DEMO MODE";
+  else if (phase === "preopen") count = "OPENS IN " + hms(34200 - t.secs);
+  else if (phase === "open") count = "CLOSES IN " + hms(57600 - t.secs);
+  else count = "BOTS ASLEEP";
+  document.getElementById("count").textContent = count;
+  const ct = new Date().toLocaleTimeString("en-US", { timeZone: "America/Chicago", hour: "numeric", minute: "2-digit" });
+  const ny = new Date().toLocaleTimeString("en-US", { timeZone: NY, hour: "numeric", minute: "2-digit" });
+  document.getElementById("clocks").innerHTML = `<b>${ct}</b> CT · ${ny} NY`;
 
-  const banner = document.getElementById("banner");
+  // ticker tape
+  const mk = status && status.market ? status.market : {};
+  let items = Object.entries(mk).map(([s, m]) => `<span>${s} ${m.price.toFixed(2)} <span class="${cls(m.chg)}">${pct(m.chg)}</span></span>`);
+  items = items.concat(ranked.map(p => `<span>${esc(p.name)} ${money(p.value)} <span class="${cls(p.since_start)}">${pct(p.since_start)}</span></span>`));
+  if (!items.length) items = [`<span>PAPER BOT HQ · FAKE MONEY · BOTS CLOCK IN AT 9:35 AM NEW YORK</span>`];
+  const tapeHtml = items.join(`<span>◆</span>`);
+  document.getElementById("tape").innerHTML = tapeHtml + `<span>◆</span>` + tapeHtml + `<span>◆</span>`;
+
+  // banner
   let msg = "";
-  if (!status) msg = "No trading data yet. The bots clock in on the next market day at 9:35 AM New York time (8:35 AM Central).";
+  if (!status) msg = "No trading data yet. The bots clock in on the next market day at 9:35 AM New York (8:35 AM Central).";
   else if (DEMO) msg = `DEMO: replaying the last check-in (${status.updated.replace("T", " ")} New York).`;
   else if (phase === "open" && fresh) {
     const [h, m] = status.updated.slice(11).split(":").map(Number);
-    if (nyParts().mins - (h * 60 + m) > 50) msg = `⚠ The bots haven't checked in since ${status.updated.slice(11)} New York time. GitHub may be running late.`;
-  } else if (phase === "open" && !fresh) msg = "Waiting for today's first check-in…";
-  if (status && status.errors) msg += (msg ? " " : "") + `⚠ ${status.errors} problem(s) today. Check the daily report.`;
-  banner.textContent = msg; banner.classList.toggle("show", !!msg);
+    if (t.secs / 60 - (h * 60 + m) > 50) msg = `⚠ The bots haven't checked in since ${status.updated.slice(11)} New York. GitHub may be running late.`;
+  } else if (phase === "open") msg = "Waiting for today's first check-in…";
+  if (status && fresh && status.errors) msg += (msg ? " " : "") + `⚠ ${status.errors} problem(s) today. Check the daily report.`;
+  const b = document.getElementById("banner"); b.textContent = msg; b.classList.toggle("show", !!msg);
 
-  document.getElementById("desks").innerHTML = players.map(p => {
+  document.getElementById("lobby").innerHTML = lobby(phase, ranked[0] ? `${ranked[0].name} ${money(ranked[0].value)}` : "");
+  document.getElementById("floor").classList.toggle("dark", !lights);
+
+  const hist = status ? status.history : [];
+  document.getElementById("desks").innerHTML = ps.map(p => {
     let mood = p.mood;
     if (phase === "weekend" || phase === "preopen" || !fresh) mood = "sleeping";
-    const bubble = mood === "sleeping" ? (phase === "preopen" ? "Zzz… market opens 9:30 New York" : "Zzz…") : p.bubble;
-    return `<div class="desk"><div class="bubble">${escapeHtml(bubble)}</div>${scene(p, mood, lightsOn)}
-      <div class="plate"><div class="name">${p.name}</div><div class="role">${p.role}</div>
-      <div class="val">${money(p.value)} <span class="${cls(p.since_start)}">${pct(p.since_start)}</span></div></div></div>`;
+    const bubble = mood === "sleeping" ? (phase === "preopen" ? "Zzz… opens 9:30 NY" : phase === "weekend" ? "Zzz… back Monday" : "Zzz…") : p.bubble;
+    const spark = hist.map(h => h[p.id]).filter(v => v != null).concat([p.value]);
+    const label = { sleeping: "ASLEEP", trading: "IN A TRADE", watching: "WATCHING", won: "WON TODAY", lost: "LOST TODAY", holding: "HOLDING", waiting: "WAITING", paused: "PAUSED" }[mood] || mood;
+    return `<button class="desk" data-id="${p.id}" aria-label="${esc(p.name)} details"><div class="bubble">${esc(bubble)}</div>${cubicle(p, mood, lights, spark)}
+      <div class="plate"><div class="row"><span class="name">${esc(p.name)}</span><span class="badge ${mood}">${label}</span></div>
+      <div class="role">${esc(p.role)}</div>
+      <div class="val">${money(p.value)} <span class="${cls(p.since_start)}" style="font-size:20px">${pct(p.since_start)}</span></div>
+      <div class="mini">today <span class="${cls(p.today)}">${pct(p.today)}</span> · ${p.trades} trades${p.holding ? " · " + p.holding : ""}</div></div></button>`;
   }).join("");
+  document.querySelectorAll(".desk").forEach(el => el.onclick = () => openBot(el.dataset.id));
 
-  const ranked = [...players].sort((a, b) => b.value - a.value);
-  document.getElementById("board").innerHTML =
-    `<tr style="color:var(--dim)"><td>Bot</td><td class="r">Value</td><td class="r">Today</td><td class="r">Trades</td></tr>` +
-    ranked.map((p, i) =>
-    `<tr><td>${i + 1}. ${p.name}</td><td class="r">${money(p.value)}</td>
-     <td class="r ${cls(p.today)}">${pct(p.today)}</td><td class="r">${p.trades}</td></tr>`).join("");
+  // leaderboard bars: centered at $1,000, scaled to the biggest move
+  const all = ps.map(p => Math.abs(p.since_start)), span = Math.max(0.01, ...all);
+  document.getElementById("board").innerHTML = [...ps].sort((a, b) => b.value - a.value).map((p, i) => {
+    const w = Math.abs(p.since_start) / span * 50, left = p.since_start >= 0 ? 50 : 50 - w;
+    return `<div class="lb-row"><span>${i + 1}.</span><span>${esc(p.name)}</span>
+      <span class="lb-bar"><span class="mid"></span><i style="left:${left}%;width:${w}%;background:${p.since_start >= 0 ? "var(--up)" : "var(--down)"}"></i></span>
+      <span class="lb-val">${money(p.value)}</span></div>`;
+  }).join("") + `<div class="mini" style="color:var(--faint);margin-top:6px">Center line = $1,000. V3 is a shadow bot (not in the official race).</div>`;
 
+  // terminal log
   const ev = status && fresh ? status.events : [];
   document.getElementById("feed").innerHTML = ev.length
-    ? ev.slice().reverse().map(e => `<li>${escapeHtml(e.replace(/\)\. .*$/, ")"))}</li>`).join("")
-    : `<li style="color:var(--dim)">No trades yet today.</li>`;
+    ? ev.slice().reverse().map(e => {
+        const m = e.match(/^(.*?): (\d\d:\d\d) (.*)$/);
+        return m ? `<div><span class="t">${m[2]}</span> ${esc(m[1])} › ${esc(m[3].replace(/\)\. .*$/, ")"))}</div>` : `<div>${esc(e)}</div>`;
+      }).join("")
+    : `<div class="t">&gt; no trades yet today_</div>`;
 
-  document.getElementById("race").innerHTML = raceChart(status ? status.history : [], players);
+  document.getElementById("race").innerHTML = raceChart(hist, ps);
+  const start = status ? status.start_date : "Nov 2, 2026";
+  document.getElementById("facts").innerHTML = `
+    <div>🏁 Race started <b>${start}</b> · strategy <b>v${status ? status.version : "2.0"}</b></div>
+    <div style="margin-top:6px">📏 Real-money bar: <b>26 weeks</b>, <b>30+ trades</b>, beat Holdy, parent agrees.</div>
+    <div style="margin-top:6px">📚 Research: 97% of people who day traded 300+ days lost money (Chague et al., 2020).</div>
+    <div style="margin-top:6px">🧪 Every day-trader lost to Holdy in backtests. This race checks it live, for free.</div>
+    <div style="margin-top:6px;color:var(--faint)">Tap a desk to see how that bot works.</div>`;
   document.getElementById("foot").textContent = status
-    ? `Last check-in: ${status.updated.replace("T", " ")} New York · strategy v${status.version} · started ${status.start_date} · updates every ~30 min while the market is open.`
-    : "Updates every ~30 min while the market is open.";
+    ? `Last check-in ${status.updated.replace("T", " ")} New York · updates ~every 30 min while the market is open · PAPER / SIMULATION ONLY`
+    : "Updates ~every 30 min while the market is open · PAPER / SIMULATION ONLY";
 }
 
-function raceChart(hist, players) {
+function raceChart(hist, ps) {
   if (!hist || hist.length < 2) return `<div style="color:var(--dim)">The race chart appears after 2 trading days.</div>`;
-  const ids = players.map(p => p.id), vals = hist.flatMap(h => ids.map(id => h[id]));
-  const lo = Math.min(...vals, 1000) - 5, hi = Math.max(...vals, 1000) + 5, W = 300, H = 120;
-  const x = i => 8 + i * (W - 16) / (hist.length - 1), y = v => H - 8 - (v - lo) * (H - 16) / (hi - lo);
-  const dashes = ["", "4 2", "1 2", "6 2 1 2"], widths = [2, 1.5, 1.5, 1.5];
+  const ids = ps.map(p => p.id).filter(id => hist.some(h => h[id] != null));
+  const vals = hist.flatMap(h => ids.map(id => h[id]).filter(v => v != null));
+  const lo = Math.min(...vals, 1000) - 4, hi = Math.max(...vals, 1000) + 4, W = 320, H = 150;
+  const x = i => 10 + i * (W - 20) / (hist.length - 1), y = v => H - 10 - (v - lo) * (H - 20) / (hi - lo);
+  const style = { d2_ai: ["#f0f0f0", ""], d1_momentum: ["#f0f0f0", "5 3"], d3_breakout: ["#f0f0f0", "1 3"], buy_hold: ["#a6d4a6", ""], v3_shadow: ["#a0a0a0", "6 2 1 2"] };
   let s = `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none"><line x1="0" x2="${W}" y1="${y(1000)}" y2="${y(1000)}" stroke="#333" stroke-dasharray="2 3"/>`;
-  ids.forEach((id, k) => {
-    s += `<polyline fill="none" stroke="${k === 3 ? "#9a9a9a" : "#f2f2f2"}" stroke-width="${widths[k]}" stroke-dasharray="${dashes[k]}"
-      points="${hist.map((h, i) => `${x(i)},${y(h[id])}`).join(" ")}"/>`;
+  ids.forEach(id => {
+    const pts = hist.map((h, i) => h[id] != null ? `${x(i)},${y(h[id])}` : null).filter(Boolean).join(" ");
+    s += `<polyline fill="none" stroke="${style[id][0]}" stroke-width="${id === "buy_hold" ? 2 : 1.5}" stroke-dasharray="${style[id][1]}" points="${pts}"/>`;
   });
-  s += `</svg><div style="color:var(--dim);font-size:16px">— AI · - - Momo · ··· Rocket · gray = Holdy · dotted line = $1,000</div>`;
+  s += `</svg><div class="legend">` + ids.map(id => `<span><svg viewBox="0 0 26 8"><line x1="0" x2="26" y1="4" y2="4" stroke="${style[id][0]}" stroke-width="2" stroke-dasharray="${style[id][1]}"/></svg> ${BOTS[id].name}</span>`).join("") + `</div>`;
   return s;
 }
 
-function escapeHtml(t) { return String(t).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c])); }
+function openBot(id) {
+  const p = players().find(q => q.id === id), info = BOTS[id];
+  if (!p || !info) return;
+  document.getElementById("dinner").innerHTML = `<button class="close" onclick="closeBot()">CLOSE ✕</button>
+    <h3 id="dtitle">${esc(info.name)} · ${esc(info.role)}</h3>
+    <div class="stats">
+      <div class="stat"><small>Value</small>${money(p.value)}</div>
+      <div class="stat"><small>Since start</small><span class="${cls(p.since_start)}">${pct(p.since_start)}</span></div>
+      <div class="stat"><small>Today</small><span class="${cls(p.today)}">${pct(p.today)}</span></div>
+      <div class="stat"><small>Completed trades</small>${p.trades}</div>
+      <div class="stat"><small>Holding</small>${p.holding || "cash"}</div>
+    </div>
+    <p><b>How it works:</b> ${esc(info.how)}</p>
+    <p style="color:var(--dim)"><b>Backtest:</b> ${esc(info.backtest)}</p>
+    <p style="color:var(--faint)">Paper / simulation only. Fake money.</p>`;
+  document.getElementById("drawer").classList.add("open");
+}
+function closeBot() { document.getElementById("drawer").classList.remove("open"); }
+document.addEventListener("keydown", e => { if (e.key === "Escape") closeBot(); });
 
 async function load() {
   try {
@@ -262,12 +436,16 @@ async function load() {
   } catch (e) { /* keep last good data */ }
   render();
 }
-function tick() {
-  document.getElementById("clock").textContent = new Date().toLocaleTimeString("en-US",
-    { timeZone: "America/Chicago", hour: "numeric", minute: "2-digit" }) + " CT";
-}
-load(); tick();
-setInterval(load, 60000); setInterval(tick, 1000); setInterval(render, 60000);
+load();
+setInterval(load, 60000);
+setInterval(() => {  // tick the clocks + countdown every second without redrawing the desks
+  const t = nyParts(), phase = phaseNow();
+  const ct = new Date().toLocaleTimeString("en-US", { timeZone: "America/Chicago", hour: "numeric", minute: "2-digit" });
+  const ny = new Date().toLocaleTimeString("en-US", { timeZone: NY, hour: "numeric", minute: "2-digit" });
+  document.getElementById("clocks").innerHTML = `<b>${ct}</b> CT · ${ny} NY`;
+  if (!DEMO && phase === "preopen") document.getElementById("count").textContent = "OPENS IN " + hms(34200 - t.secs);
+  if (!DEMO && phase === "open") document.getElementById("count").textContent = "CLOSES IN " + hms(57600 - t.secs);
+}, 1000);
 </script>
 </body>
 </html>

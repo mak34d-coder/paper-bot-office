@@ -1,0 +1,274 @@
+{
+ "paper_only": true,
+ "updated": "2026-11-03T14:59",
+ "date": "2026-11-03",
+ "phase": "open",
+ "version": "2.1",
+ "start_cash": 1000,
+ "plan_amount": 300,
+ "start_date": "2026-11-03",
+ "players": [
+  {
+   "id": "d2_ai",
+   "name": "AI",
+   "role": "AI day trader",
+   "mood": "trading",
+   "holding": "QQQ",
+   "value": 999.56,
+   "today": -0.00044,
+   "since_start": -0.00044,
+   "trades": 0,
+   "bubble": "Holding QQQ \u00b7 -$0.44"
+  },
+  {
+   "id": "d1_momentum",
+   "name": "Momo",
+   "role": "Late-day momentum",
+   "mood": "watching",
+   "holding": null,
+   "value": 1000,
+   "today": 0.0,
+   "since_start": 0.0,
+   "trades": 0,
+   "bubble": "Watching the charts\u2026"
+  },
+  {
+   "id": "d3_breakout",
+   "name": "Rocket",
+   "role": "Breakout (QQQ)",
+   "mood": "watching",
+   "holding": null,
+   "value": 1000,
+   "today": 0.0,
+   "since_start": 0.0,
+   "trades": 0,
+   "bubble": "Watching the charts\u2026"
+  },
+  {
+   "id": "buy_hold",
+   "name": "Holdy",
+   "role": "Buy & hold SPY",
+   "mood": "holding",
+   "holding": "SPY",
+   "value": 999.61,
+   "today": -0.00039,
+   "since_start": -0.00039,
+   "trades": 0,
+   "bubble": "Holding SPY. Never selling."
+  },
+  {
+   "id": "v3_shadow",
+   "name": "V3",
+   "role": "AI v3 lab (shadow)",
+   "mood": "watching",
+   "holding": null,
+   "value": 1000,
+   "today": 0.0,
+   "since_start": 0.0,
+   "trades": 0,
+   "bubble": "Only trades if it beats fees\u2026"
+  }
+ ],
+ "events": [
+  "\ud83e\udd16 AI day trader: 14:59 BUY 1.4613 QQQ @ $684.32 (fees $0.01, -0.3 bp vs fair price; Alpaca paper fill). AI chance of beating costs by the close: QQQ 53%, IWM 36%, DIA 25%, SPY 21%.",
+  "\ud83d\udce6 Buy & hold SPY: 14:59 BUY 1.3263 SPY @ $753.95 (fees $0.01, +0.2 bp vs fair price; simulated fill at the ask). Buys once and holds forever."
+ ],
+ "timeline": [
+  {
+   "t": "14:59",
+   "notes": [
+    "Safety checks passed: paper only \u2713",
+    "Prices checked \u2713",
+    "Live quotes: IWM spread 0.7 bp, DIA spread 1.4 bp, QQQ spread 1.0 bp, SPY spread 0.4 bp",
+    "Alpaca positions match the bot's records \u2713",
+    "New hourly bar closed (13:30): day-traders decide"
+   ],
+   "decisions": [
+    {
+     "bot": "d2_ai",
+     "action": "BUY QQQ",
+     "why": "AI chance of beating costs by the close: QQQ 53%, IWM 36%, DIA 25%, SPY 21%."
+    },
+    {
+     "bot": "d1_momentum",
+     "action": "no trade",
+     "why": "SPY first hour vs yesterday: +0.32% (only decides at the last-hour check)."
+    },
+    {
+     "bot": "d3_breakout",
+     "action": "no trade",
+     "why": "QQQ $685.98 vs first-hour high $687.28."
+    },
+    {
+     "bot": "buy_hold",
+     "action": "BUY SPY",
+     "why": "Buys once and holds forever."
+    },
+    {
+     "bot": "v3_shadow",
+     "action": "no trade",
+     "why": "Nothing passed the fee filter (needs >55% and >+0.05%). SPY 37%/-0.10%, QQQ 57%/+0.01%, DIA 30%/-0.06%, IWM 38%/-0.07%"
+    }
+   ]
+  }
+ ],
+ "journal": [],
+ "readiness": {
+  "as_of": null,
+  "days": 0,
+  "weeks": 0,
+  "recent_errors": 0,
+  "plan_amount": 300,
+  "start_cash": 1000,
+  "bar": {
+   "weeks": 26,
+   "trades": 30
+  },
+  "assumed_round_trip": 0.0012,
+  "measured_round_trip": null,
+  "bots": [
+   {
+    "id": "d2_ai",
+    "name": "\ud83e\udd16 AI v2",
+    "value": 999.56,
+    "ret": -0.00044,
+    "max_dd": -0.00044,
+    "ratio": -1.0,
+    "plan_value": 299.86,
+    "trades": 0,
+    "wins": 0,
+    "win_rate": null,
+    "avg_ret": null,
+    "total_fees": 0.0,
+    "avg_cost_pct": null,
+    "avg_gap_bps": null,
+    "vs_holdy": -5e-05,
+    "checks": {
+     "26 weeks": false,
+     "30 trades": false,
+     "beats Holdy": false,
+     "8 clean weeks": false,
+     "parent says yes": false
+    },
+    "passed": 0
+   },
+   {
+    "id": "d1_momentum",
+    "name": "\u23f1\ufe0f Momo",
+    "value": 1000,
+    "ret": 0.0,
+    "max_dd": 0.0,
+    "ratio": null,
+    "plan_value": 300,
+    "trades": 0,
+    "wins": 0,
+    "win_rate": null,
+    "avg_ret": null,
+    "total_fees": 0.0,
+    "avg_cost_pct": null,
+    "avg_gap_bps": null,
+    "vs_holdy": 0.00039,
+    "checks": {
+     "26 weeks": false,
+     "30 trades": false,
+     "beats Holdy": false,
+     "8 clean weeks": false,
+     "parent says yes": false
+    },
+    "passed": 0
+   },
+   {
+    "id": "d3_breakout",
+    "name": "\ud83d\ude80 Rocket",
+    "value": 1000,
+    "ret": 0.0,
+    "max_dd": 0.0,
+    "ratio": null,
+    "plan_value": 300,
+    "trades": 0,
+    "wins": 0,
+    "win_rate": null,
+    "avg_ret": null,
+    "total_fees": 0.0,
+    "avg_cost_pct": null,
+    "avg_gap_bps": null,
+    "vs_holdy": 0.00039,
+    "checks": {
+     "26 weeks": false,
+     "30 trades": false,
+     "beats Holdy": false,
+     "8 clean weeks": false,
+     "parent says yes": false
+    },
+    "passed": 0
+   },
+   {
+    "id": "buy_hold",
+    "name": "\ud83d\udce6 Holdy",
+    "value": 999.61,
+    "ret": -0.00039,
+    "max_dd": -0.00039,
+    "ratio": -1.0,
+    "plan_value": 299.88,
+    "trades": 0,
+    "wins": 0,
+    "win_rate": null,
+    "avg_ret": null,
+    "total_fees": 0.0,
+    "avg_cost_pct": null,
+    "avg_gap_bps": null,
+    "checks": null
+   },
+   {
+    "id": "v3_shadow",
+    "name": "\ud83e\uddea V3 (shadow)",
+    "value": 1000,
+    "ret": 0.0,
+    "max_dd": 0.0,
+    "ratio": null,
+    "plan_value": 300,
+    "trades": 0,
+    "wins": 0,
+    "win_rate": null,
+    "avg_ret": null,
+    "total_fees": 0.0,
+    "avg_cost_pct": null,
+    "avg_gap_bps": null,
+    "vs_holdy": 0.00039,
+    "checks": {
+     "26 weeks": false,
+     "30 trades": false,
+     "beats Holdy": false,
+     "8 clean weeks": false,
+     "parent says yes": false
+    },
+    "passed": 0
+   }
+  ],
+  "ready": []
+ },
+ "market": {
+  "DIA": {
+   "price": 516.83,
+   "chg": -0.00491,
+   "spread_bps": 1.35
+  },
+  "IWM": {
+   "price": 280.07,
+   "chg": 0.0033,
+   "spread_bps": 0.71
+  },
+  "QQQ": {
+   "price": 684.03,
+   "chg": 0.00426,
+   "spread_bps": 1.02
+  },
+  "SPY": {
+   "price": 753.66,
+   "chg": 0.00203,
+   "spread_bps": 0.4
+  }
+ },
+ "errors": 0,
+ "history": []
+}

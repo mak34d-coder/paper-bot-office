@@ -1,12 +1,12 @@
 {
  "paper_only": true,
- "updated": "2026-11-11T15:04",
- "date": "2026-11-11",
+ "updated": "2026-11-12T15:42",
+ "date": "2026-11-12",
  "phase": "open",
  "version": "2.1",
  "start_cash": 1000,
  "plan_amount": 300,
- "start_date": "2026-11-11",
+ "start_date": "2026-11-12",
  "players": [
   {
    "id": "d2_ai",
@@ -36,13 +36,13 @@
    "id": "d3_breakout",
    "name": "Rocket",
    "role": "Breakout (QQQ)",
-   "mood": "trading",
-   "holding": "QQQ",
-   "value": 1000.52,
-   "today": 0.00052,
-   "since_start": 0.00052,
+   "mood": "watching",
+   "holding": null,
+   "value": 1000,
+   "today": 0.0,
+   "since_start": 0.0,
    "trades": 0,
-   "bubble": "Holding QQQ \u00b7 +$0.52"
+   "bubble": "Watching the charts\u2026"
   },
   {
    "id": "buy_hold",
@@ -50,9 +50,9 @@
    "role": "Buy & hold SPY",
    "mood": "holding",
    "holding": "SPY",
-   "value": 1000.21,
-   "today": 0.00021,
-   "since_start": 0.00021,
+   "value": 999.95,
+   "today": -5e-05,
+   "since_start": -5e-05,
    "trades": 0,
    "bubble": "Holding SPY. Never selling."
   },
@@ -70,34 +70,34 @@
   }
  ],
  "events": [
-  "\ud83d\ude80 Breakout (QQQ): 15:04 BUY 1.4453 QQQ @ $691.88 (fees $0.01, -0.6 bp vs fair price; Alpaca paper fill). QQQ $692.38 vs first-hour high $689.02.",
-  "\ud83d\udce6 Buy & hold SPY: 15:04 BUY 1.3150 SPY @ $760.46 (fees $0.01, +0.2 bp vs fair price; simulated fill at the ask). Buys once and holds forever."
+  "\ud83d\udce6 Buy & hold SPY: 15:42 BUY 1.3212 SPY @ $756.90 (fees $0.01, +0.2 bp vs fair price; simulated fill at the ask). Buys once and holds forever."
  ],
  "timeline": [
   {
-   "t": "15:04",
+   "t": "15:42",
    "notes": [
     "Safety checks passed: paper only \u2713",
     "Prices checked \u2713",
-    "Live quotes: QQQ spread 0.4 bp, SPY spread 0.4 bp, IWM spread 0.7 bp, DIA spread 2.9 bp",
+    "Live quotes: DIA spread 1.5 bp, QQQ spread 0.6 bp, SPY spread 0.4 bp, IWM spread 0.4 bp",
     "\u26a0 d2_ai: Alpaca shows {'QQQ': 1.461283968} but the bot's records show no positions.",
-    "New hourly bar closed (13:30): day-traders decide"
+    "\u26a0 d3_breakout: Alpaca shows {'QQQ': 1.44531679} but the bot's records show no positions.",
+    "New hourly bar closed (14:30): day-traders decide"
    ],
    "decisions": [
     {
      "bot": "d2_ai",
      "action": "no trade",
-     "why": "AI chance of beating costs by the close: DIA 34%, IWM 31%, SPY 28%, QQQ 27%."
+     "why": "AI chance of beating costs by the close: not deciding at this hour."
     },
     {
      "bot": "d1_momentum",
      "action": "no trade",
-     "why": "SPY first hour vs yesterday: +0.91% (only decides at the last-hour check)."
+     "why": "SPY first hour vs yesterday: -0.31%."
     },
     {
      "bot": "d3_breakout",
-     "action": "BUY QQQ",
-     "why": "QQQ $692.38 vs first-hour high $689.02."
+     "action": "no trade",
+     "why": "QQQ $687.38 vs first-hour high $688.42."
     },
     {
      "bot": "buy_hold",
@@ -107,7 +107,7 @@
     {
      "bot": "v3_shadow",
      "action": "no trade",
-     "why": "Nothing passed the fee filter (needs >55% and >+0.05%). SPY 42%/-0.05%, QQQ 60%/-0.02%, DIA 34%/-0.06%, IWM 41%/-0.04%"
+     "why": "Nothing passed the fee filter (needs >55% and >+0.05%). SPY 35%/-0.11%, QQQ 35%/-0.14%, DIA 34%/-0.09%, IWM 34%/-0.10%"
     }
    ]
   }
@@ -142,7 +142,7 @@
     "total_fees": 0.0,
     "avg_cost_pct": null,
     "avg_gap_bps": null,
-    "vs_holdy": -0.00021,
+    "vs_holdy": 5e-05,
     "checks": {
      "26 weeks": false,
      "30 trades": false,
@@ -167,7 +167,7 @@
     "total_fees": 0.0,
     "avg_cost_pct": null,
     "avg_gap_bps": null,
-    "vs_holdy": -0.00021,
+    "vs_holdy": 5e-05,
     "checks": {
      "26 weeks": false,
      "30 trades": false,
@@ -180,11 +180,11 @@
    {
     "id": "d3_breakout",
     "name": "\ud83d\ude80 Rocket",
-    "value": 1000.52,
-    "ret": 0.00052,
+    "value": 1000,
+    "ret": 0.0,
     "max_dd": 0.0,
     "ratio": null,
-    "plan_value": 300.15,
+    "plan_value": 300,
     "trades": 0,
     "wins": 0,
     "win_rate": null,
@@ -192,7 +192,7 @@
     "total_fees": 0.0,
     "avg_cost_pct": null,
     "avg_gap_bps": null,
-    "vs_holdy": 0.00031,
+    "vs_holdy": 5e-05,
     "checks": {
      "26 weeks": false,
      "30 trades": false,
@@ -205,11 +205,11 @@
    {
     "id": "buy_hold",
     "name": "\ud83d\udce6 Holdy",
-    "value": 1000.21,
-    "ret": 0.00021,
-    "max_dd": 0.0,
-    "ratio": null,
-    "plan_value": 300.06,
+    "value": 999.95,
+    "ret": -5e-05,
+    "max_dd": -5e-05,
+    "ratio": -1.0,
+    "plan_value": 299.98,
     "trades": 0,
     "wins": 0,
     "win_rate": null,
@@ -234,7 +234,7 @@
     "total_fees": 0.0,
     "avg_cost_pct": null,
     "avg_gap_bps": null,
-    "vs_holdy": -0.00021,
+    "vs_holdy": 5e-05,
     "checks": {
      "26 weeks": false,
      "30 trades": false,
@@ -249,26 +249,26 @@
  },
  "market": {
   "DIA": {
-   "price": 524.37,
-   "chg": 0.00493,
-   "spread_bps": 2.86
+   "price": 522.96,
+   "chg": -0.00277,
+   "spread_bps": 1.53
   },
   "IWM": {
-   "price": 283.1,
-   "chg": 0.00904,
-   "spread_bps": 0.71
+   "price": 278.47,
+   "chg": -0.01625,
+   "spread_bps": 0.36
   },
   "QQQ": {
-   "price": 692.25,
-   "chg": 0.02584,
-   "spread_bps": 0.43
+   "price": 687.08,
+   "chg": -0.00478,
+   "spread_bps": 0.58
   },
   "SPY": {
-   "price": 760.63,
-   "chg": 0.01425,
-   "spread_bps": 0.39
+   "price": 756.87,
+   "chg": -0.00384,
+   "spread_bps": 0.4
   }
  },
- "errors": 1,
+ "errors": 2,
  "history": []
 }

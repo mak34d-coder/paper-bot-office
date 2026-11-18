@@ -1,7 +1,7 @@
 {
  "paper_only": true,
- "updated": "2026-11-17T16:35",
- "date": "2026-11-17",
+ "updated": "2026-11-18T16:10",
+ "date": "2026-11-18",
  "phase": "closed",
  "version": "2.1",
  "start_cash": 1000,
@@ -72,14 +72,12 @@
  "events": [],
  "timeline": [
   {
-   "t": "16:35",
+   "t": "16:10",
    "notes": [
     "Safety checks passed: paper only \u2713",
     "Prices checked \u2713",
-    "\u26a0 d2_ai: Alpaca shows {'QQQ': 1.461283968} but the bot's records show no positions.",
-    "\u26a0 d3_breakout: Alpaca shows {'QQQ': 1.44531679} but the bot's records show no positions.",
-    "Closing time: every day-trader sells",
-    "Daily report, trade journal, and readiness scorecard written"
+    "Alpaca positions match the bot's records \u2713",
+    "Closing time: every day-trader sells"
    ],
    "decisions": []
   }
@@ -221,27 +219,27 @@
  },
  "market": {
   "DIA": {
-   "price": 507.35,
-   "chg": -0.01628,
+   "price": 501.7,
+   "chg": -0.01114,
    "spread_bps": null
   },
   "IWM": {
-   "price": 269.02,
-   "chg": -0.01461,
+   "price": 270.16,
+   "chg": 0.00424,
    "spread_bps": null
   },
   "QQQ": {
-   "price": 657.03,
-   "chg": -0.00728,
+   "price": 659.51,
+   "chg": 0.00377,
    "spread_bps": null
   },
   "SPY": {
-   "price": 732.4,
-   "chg": -0.01034,
+   "price": 730.33,
+   "chg": -0.00282,
    "spread_bps": null
   }
  },
- "errors": 2,
+ "errors": 0,
  "history": [
   {
    "date": "2026-11-17",

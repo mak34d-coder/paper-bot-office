@@ -1,7 +1,7 @@
 {
  "paper_only": true,
- "updated": "2026-11-18T16:10",
- "date": "2026-11-18",
+ "updated": "2026-11-19T16:14",
+ "date": "2026-11-19",
  "phase": "closed",
  "version": "2.1",
  "start_cash": 1000,
@@ -72,7 +72,7 @@
  "events": [],
  "timeline": [
   {
-   "t": "16:10",
+   "t": "16:14",
    "notes": [
     "Safety checks passed: paper only \u2713",
     "Prices checked \u2713",
@@ -219,23 +219,23 @@
  },
  "market": {
   "DIA": {
-   "price": 501.7,
-   "chg": -0.01114,
+   "price": 490.74,
+   "chg": -0.02184,
    "spread_bps": null
   },
   "IWM": {
-   "price": 270.16,
-   "chg": 0.00424,
+   "price": 264.21,
+   "chg": -0.02195,
    "spread_bps": null
   },
   "QQQ": {
-   "price": 659.51,
-   "chg": 0.00377,
+   "price": 645.1,
+   "chg": -0.02185,
    "spread_bps": null
   },
   "SPY": {
-   "price": 730.33,
-   "chg": -0.00282,
+   "price": 715.81,
+   "chg": -0.01988,
    "spread_bps": null
   }
  },

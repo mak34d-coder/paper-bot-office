@@ -1,8 +1,8 @@
 {
  "paper_only": true,
- "updated": "2026-11-19T16:14",
- "date": "2026-11-19",
- "phase": "closed",
+ "updated": "2026-11-20T15:58",
+ "date": "2026-11-20",
+ "phase": "closing",
  "version": "2.1",
  "start_cash": 1000,
  "plan_amount": 300,
@@ -72,10 +72,11 @@
  "events": [],
  "timeline": [
   {
-   "t": "16:14",
+   "t": "15:58",
    "notes": [
     "Safety checks passed: paper only \u2713",
     "Prices checked \u2713",
+    "Live quotes: DIA spread 1.7 bp, QQQ spread 1.1 bp, SPY spread 3.0 bp, IWM spread 1.2 bp",
     "Alpaca positions match the bot's records \u2713",
     "Closing time: every day-trader sells"
    ],
@@ -219,24 +220,24 @@
  },
  "market": {
   "DIA": {
-   "price": 490.74,
-   "chg": -0.02184,
-   "spread_bps": null
+   "price": 480.11,
+   "chg": -0.02172,
+   "spread_bps": 1.67
   },
   "IWM": {
-   "price": 264.21,
-   "chg": -0.02195,
-   "spread_bps": null
+   "price": 256.61,
+   "chg": -0.02873,
+   "spread_bps": 1.17
   },
   "QQQ": {
-   "price": 645.1,
-   "chg": -0.02185,
-   "spread_bps": null
+   "price": 608.1,
+   "chg": -0.05736,
+   "spread_bps": 1.15
   },
   "SPY": {
-   "price": 715.81,
-   "chg": -0.01988,
-   "spread_bps": null
+   "price": 687.8,
+   "chg": -0.03909,
+   "spread_bps": 3.05
   }
  },
  "errors": 0,
